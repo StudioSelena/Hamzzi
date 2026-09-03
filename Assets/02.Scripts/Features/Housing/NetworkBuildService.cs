@@ -136,7 +136,7 @@ public class NetworkBuildService
                             {
                                 if (housingVM != null)
                                 {
-                                    SpawnLoadGardenFurniture(housingVM, furnitureVM).Forget();
+                                    await SpawnLoadGardenFurniture(housingVM, furnitureVM);
                                 }
                             }
                             else
@@ -145,7 +145,7 @@ public class NetworkBuildService
                                 {
                                     if (room.InstanceID == roomUID.ToString())
                                     {
-                                        SpawnLoadFurniture(room, furnitureVM).Forget();
+                                        await SpawnLoadFurniture(room, furnitureVM);
                                         break;
                                     }
                                 }
@@ -358,7 +358,7 @@ public class NetworkBuildService
         }
     }
 
-    private async UniTaskVoid SpawnLoadFurniture(RoomViewModel roomVM, FurnitureViewModel furnitureVM)
+    private async UniTask SpawnLoadFurniture(RoomViewModel roomVM, FurnitureViewModel furnitureVM)
     {
         GameObject prefab = await GameObjectManager.Instance.CreateObjectAsync(furnitureVM.InstanceID.ToString(), furnitureVM.PrefabPath, Vector3.zero);
         prefab.transform.rotation = Quaternion.identity;
@@ -395,7 +395,7 @@ public class NetworkBuildService
         ServiceManager.Instance.HousingService.RegisterSpawnFurniture(furnitureVM.InstanceID, prefab);
     }
 
-    private async UniTaskVoid SpawnLoadGardenFurniture(HousingViewModel housingVM, FurnitureViewModel furnitureVM)
+    private async UniTask SpawnLoadGardenFurniture(HousingViewModel housingVM, FurnitureViewModel furnitureVM)
     {
         GameObject prefab = await GameObjectManager.Instance.CreateObjectAsync(furnitureVM.InstanceID.ToString(), furnitureVM.PrefabPath, Vector3.zero);
         prefab.transform.rotation = Quaternion.identity;
