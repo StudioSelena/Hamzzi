@@ -321,6 +321,12 @@ public class HousingView : ViewBase
         float subCellSize = GetCurrentSubCellSize();
         rot = Quaternion.Euler(0f, furnitureVM.RotationAngle, 0f);
 
+        float furnitureYOffset = 0f;
+        if (_ghostObject != null && _ghostObject.TryGetComponent<FurnitureView>(out var fView))
+        {
+            furnitureYOffset = fView.Offset;
+        }
+
         if (_housingVM.TargetRoom != null)
         {
             float localX = (furnitureVM.LocalPos.x + furnitureVM.Size.x * 0.5f) * subCellSize;
@@ -357,7 +363,13 @@ public class HousingView : ViewBase
         GetFurnitureWorldTransform(_housingVM.FurnitureVM, out Vector3 pos, out Quaternion rot, out float tileYOffset);
         float subCellSize = GetCurrentSubCellSize();
 
-        _ghostObject.transform.position = pos;
+        float furnitureYOffset = 0f;
+        if (_ghostObject.TryGetComponent<FurnitureView>(out var fView))
+        {
+            furnitureYOffset = fView.Offset;
+        }
+
+        _ghostObject.transform.position = new Vector3(pos.x, pos.y + furnitureYOffset, pos.z);
 
         float currentAngle = _housingVM.FurnitureVM.RotationAngle;
 
@@ -472,9 +484,19 @@ public class HousingView : ViewBase
         }
 
         GameObject prefab = await GameObjectManager.Instance.CreateObjectAsync(furnitureVM.InstanceID, furnitureVM.PrefabPath, spawnPos);
+
+
         prefab.transform.rotation = spawnRot;
 
         FurnitureView furnitureView = prefab.GetComponent<FurnitureView>();
+
+        if (furnitureView != null)
+        {
+            spawnPos.y += furnitureView.Offset;
+        }
+
+        prefab.transform.SetPositionAndRotation(spawnPos, spawnRot);
+
         furnitureView.ResetMaterial();
         furnitureView.Bind(furnitureVM);
 
