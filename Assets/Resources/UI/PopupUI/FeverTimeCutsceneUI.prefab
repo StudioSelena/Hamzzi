@@ -285,8 +285,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -225.99997, y: -242}
+  m_AnchoredPosition: {x: 4.779175, y: 0.00012207031}
+  m_SizeDelta: {x: -139.9753, y: -146.4171}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3398013250936700100
 GameObject:
@@ -324,7 +324,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 25}
+  m_AnchoredPosition: {x: 0, y: 102}
   m_SizeDelta: {x: 600, y: 113}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!1 &3869332108664411466
@@ -577,6 +577,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FeverTimeCutsceneUI
   RawImage_Cutscene: {fileID: 5847575354610689357}
+  Image_Panel: {fileID: 3951138126976762048}
   Text_TapGuide: {fileID: 659293676455746895}
   Button_Tap: {fileID: 277740322178771895}
   Image_Fill: {fileID: 4850961806914134723}
@@ -744,6 +745,7 @@ GameObject:
   - component: {fileID: 687322355589017315}
   - component: {fileID: 7209846480787752529}
   - component: {fileID: 277740322178771895}
+  - component: {fileID: 5655953703898410775}
   m_Layer: 5
   m_Name: Button_Tap
   m_TagString: Untagged
@@ -868,6 +870,21 @@ MonoBehaviour:
   Button_Base: {fileID: 7209846480787752529}
   Image_Base: {fileID: 0}
   Text_Base: {fileID: 1177330604778220243}
+--- !u!114 &5655953703898410775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5808459550163447240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 1, g: 0.9570984, b: 0.5990566, a: 0.8}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1 &6495426869859496854
 GameObject:
   m_ObjectHideFlags: 0
@@ -1222,15 +1239,15 @@ MonoBehaviour:
       m_Calls: []
   m_text: TAP
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 75dfa450487a5cf46bba53a65b2677c5, type: 2}
-  m_sharedMaterial: {fileID: 5671220900977671066, guid: 75dfa450487a5cf46bba53a65b2677c5, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 868954f7e8937394cbb2b07bfc3a111d, type: 2}
+  m_sharedMaterial: {fileID: 5671220900977671066, guid: 868954f7e8937394cbb2b07bfc3a111d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4282127580
-  m_fontColor: {r: 0.8627452, g: 0.07843138, b: 0.2352941, a: 1}
+    rgba: 4278190335
+  m_fontColor: {r: 1, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
