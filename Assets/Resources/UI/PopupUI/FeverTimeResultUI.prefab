@@ -1204,7 +1204,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Btn_BackgroundClose
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6588820528779530228, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
+    - {fileID: 2155738438989154769, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
