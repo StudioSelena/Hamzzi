@@ -7,6 +7,7 @@ using UnityEngine.AI;
 public class HamsterManager : SingletonBase<HamsterManager>
 {
     private const string HamsterPrefabAddress = "Hamster/Hamster_00";
+    private const float MinMeasureSeconds = 30f;
 
     [SerializeField] private Vector3 _gardenSpawnRangeMin;
     [SerializeField] private Vector3 _gardenSpawnRangeMax;
@@ -198,14 +199,24 @@ public class HamsterManager : SingletonBase<HamsterManager>
     }
 
     // 측정 구간의 실제 채집 횟수로 초당 채집량을 갱신하고 구간을 새로 연다
+    // 구간이 너무 짧으면 갱신하지 않고 구간을 이어서 누적한다 (열자마자 게임을 종료하면 큰 값으로 갱신되는 것을 막는다)
     public void RefreshTotalCollectSpeedPerSec()
     {
         float elapsedSeconds = Time.time - _measureStartTime;
 
-        if (elapsedSeconds > 0f)
+        if (elapsedSeconds < MinMeasureSeconds)
         {
-            TotalCollectSpeedPerSec = _collectCount / elapsedSeconds;
+#if UNITY_EDITOR
+            Debug.Log($"[초당 채집량] 측정 구간 {elapsedSeconds}초로 부족. 갱신 스킵");
+#endif
+            return;
         }
+
+        TotalCollectSpeedPerSec = _collectCount / elapsedSeconds;
+
+#if UNITY_EDITOR
+        Debug.Log($"[초당 채집량] 구간 {elapsedSeconds}초 / 채집 {_collectCount}회 → 초당 {TotalCollectSpeedPerSec}");
+#endif
 
         ResetCollectMeasure();
     }
