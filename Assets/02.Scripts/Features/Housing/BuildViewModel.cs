@@ -323,12 +323,25 @@ public class BuildViewModel : ViewModelBase
             BuildDefaultAisle(pos);
         }
 
-        Vector2Int exitAislePos = defaultAisle[0];
-
-        if (Builds.TryGetValue(exitAislePos, out RoomViewModel aisleVM) && aisleVM.BuildType == BuildType.Aisle)
+        int maxY = int.MinValue;
+        foreach (var pos in defaultAisle)
         {
-            aisleVM.SetWallActive(0, true);
-            aisleVM.Refresh();
+            if (pos.y > maxY)
+            {
+                maxY = pos.y;
+            }
+        }
+
+        foreach (var pos in defaultAisle)
+        {
+            if (pos.y == maxY)
+            {
+                if (Builds.TryGetValue(pos, out RoomViewModel aisleVM) && aisleVM.BuildType == BuildType.Aisle)
+                {
+                    aisleVM.SetWallActive(0, true);
+                    aisleVM.Refresh();
+                }
+            }
         }
 
         ServiceManager.Instance.BuildService.RefreshAisleNavMesh(Builds);
