@@ -23,7 +23,8 @@ public class GachaView : ViewBase
 
     private void Start()
     {
-        _collectionViewModel = ServiceManager.Instance.CollectionService.GetCollectionViewModel();
+        long userUID = ServiceManager.Instance.LoginService.GetViewModel().UserUID;
+        _collectionViewModel = ServiceManager.Instance.CollectionService.GetCollectionViewModel(userUID);
         _userViewModel = ServiceManager.Instance.UserService.GetUserViewModel();
 
         _userViewModel.PropertyChanged += OnPropertyChanged;

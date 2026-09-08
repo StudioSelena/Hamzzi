@@ -224,22 +224,24 @@ public class HousingViewModel : ViewModelBase
         return categoryList;
     }
 
-    public void EnterHousingMode()
+    public void EnterHousingMode(RoomViewModel targetRoom = null)
     {
         IsInHousingMode = true;
-        _targetRoom = null;
         _furnitureVM = null;
 
-        if (CurrentViewMode == HousingViewMode.Garden)
+        if (targetRoom != null)
         {
+            _targetRoom = targetRoom;
             _currentState = HousingState.Placing;
         }
         else
         {
-            _currentState = HousingState.SelectRoom;
+            _targetRoom = null;
+            _currentState = (CurrentViewMode == HousingViewMode.Garden) ? HousingState.Placing : HousingState.SelectRoom;
         }
 
-        InvokeOnceOnInit();
+        OnPropertyChanged(nameof(TargetRoom));
+        OnPropertyChanged(nameof(CurrentState));
     }
 
     public void SelectInstallFurniture(FurnitureViewModel furnitureVM)
@@ -266,6 +268,13 @@ public class HousingViewModel : ViewModelBase
         DestroyFurniture = FurnitureVM;
         string furnitureID = FurnitureVM.FurnitureID;
 
+        if (!string.IsNullOrEmpty(FurnitureVM.AssignHamsterID))
+        {
+            FurnitureVM.AssignHamsterID = null;
+        }
+
+        ServiceManager.Instance.HousingService.RefreshFurnitureBuff();
+
         if (CurrentViewMode == HousingViewMode.Garden)
         {
             RemoveGardenFurniture(FurnitureVM);
@@ -280,6 +289,9 @@ public class HousingViewModel : ViewModelBase
         ServiceManager.Instance.HousingService.AddItem(furnitureID, icon);
 
         ResetPlacingState();
+
+        ServiceManager.Instance.NetworkBuildService.RequestSaveHousingData();
+
         return true;
     }
 
@@ -289,7 +301,8 @@ public class HousingViewModel : ViewModelBase
 
         Vector2Int initialPos = new Vector2Int(TargetRoom.SubGridSize.x / 2 - subSize.x / 2, TargetRoom.SubGridSize.y / 2 - subSize.y / 2);
 
-        FurnitureVM = new FurnitureViewModel(data.Id, data.PrefabPath, initialPos, subSize);
+        string newInstanceID = GameUtil.GenerateUID().ToString();
+        FurnitureVM = new FurnitureViewModel(newInstanceID, data.Id, data.PrefabPath, initialPos, subSize);
         CheckCurrentPos();
     }
 
@@ -297,7 +310,8 @@ public class HousingViewModel : ViewModelBase
     {
         Vector2Int initialPos = new Vector2Int(10, 10);
 
-        FurnitureVM = new FurnitureViewModel(data.Id, data.PrefabPath, initialPos, subSize);
+        string newInstanceID = GameUtil.GenerateUID().ToString();
+        FurnitureVM = new FurnitureViewModel(newInstanceID, data.Id, data.PrefabPath, initialPos, subSize);
         CheckCurrentPos();
     }
 
@@ -353,9 +367,18 @@ public class HousingViewModel : ViewModelBase
             DecreaseFurnitureStack(furnitureVM.FurnitureID);
 
             ConfirmFurniture = furnitureVM;
-            ApplyFurnitureEffect(furnitureVM);
+
+            if (CurrentState != HousingState.Editing)
+            {
+                ServiceManager.Instance.HousingService.RefreshFurnitureBuff();
+            }
+
 
             ResetPlacingState();
+            NavigationManager.Instance.BuildNav();
+
+            ServiceManager.Instance.NetworkBuildService.RequestSaveHousingData();
+
             return true;
         }
 
@@ -379,27 +402,6 @@ public class HousingViewModel : ViewModelBase
 
                 OnPropertyChanged(nameof(ItemList));
                 return;
-            }
-        }
-    }
-
-    private void ApplyFurnitureEffect(FurnitureViewModel furnitureVM)
-    {
-        var itemData = GameDataManager.Instance.GetData<ItemData>(furnitureVM.FurnitureID);
-        if (itemData == null)
-        {
-            return;
-        }
-
-        var subCategoryEffectData = GameDataManager.Instance.GetData<SubCategoryEffectData>(itemData.SubCategory);
-        if (subCategoryEffectData != null)
-        {
-            float itemEffect = subCategoryEffectData.SeedCollectionBonus;
-
-            var userVm = ServiceManager.Instance.UserService.GetUserViewModel();
-            if(userVm != null)
-            {
-                userVm.AddSeedBuff(itemEffect);
             }
         }
     }
@@ -444,7 +446,12 @@ public class HousingViewModel : ViewModelBase
 
     public void EnterGardenMode()
     {
+        TargetRoom = null;
         CurrentViewMode = HousingViewMode.Garden;
+        CurrentState = HousingState.Placing;
+
+        OnPropertyChanged(nameof(CurrentViewMode));
+        OnPropertyChanged(nameof(TargetRoom));
     }
 
     public void EnterOverviewMode()
@@ -475,6 +482,24 @@ public class HousingViewModel : ViewModelBase
         }
 
         return true;
+    }
+
+    public void LoadGardenFurniture(FurnitureViewModel furnitureVM)
+    {
+        for (int x = 0; x < furnitureVM.Size.x; x++)
+        {
+            for (int y = 0; y < furnitureVM.Size.y; y++)
+            {
+                _gardenFurnitureGrid[furnitureVM.LocalPos + new Vector2Int(x, y)] = furnitureVM;
+            }
+        }
+
+        if (!GardenFurnitureList.Contains(furnitureVM))
+        {
+            GardenFurnitureList.Add(furnitureVM);
+        }
+
+        OnPropertyChanged(nameof(GardenFurnitureList));
     }
 
     public bool AddGardenFurniture(FurnitureViewModel furnitureVM)

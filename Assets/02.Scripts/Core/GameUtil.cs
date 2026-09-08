@@ -7,12 +7,12 @@ public static class GameUtil
 {
     private static long _lastUID = 0;
 
-    // 방치 보상 계산: 마지막 활동 시각부터 경과한 시간(초, 상한 적용)에 초당 생산량을 곱해 반환
-    public static int CalculateIdleReward(long lastActiveTicks, float productionPerSec, float capSeconds)
+    // 마지막 활동 시각부터 지금까지 경과한 시간(초). 상한 적용, 음수는 0으로 클램프
+    public static float CalculateElapsedSeconds(long lastActiveTicks, float capSeconds)
     {
         if (lastActiveTicks <= 0)
         {
-            return 0;
+            return 0f;
         }
 
         long elapsedTicks = DateTime.UtcNow.Ticks - lastActiveTicks;
@@ -23,9 +23,15 @@ public static class GameUtil
             elapsedSeconds = 0f;
         }
 
-        elapsedSeconds = Mathf.Min(elapsedSeconds, capSeconds);
+        return Mathf.Min(elapsedSeconds, capSeconds);
+    }
 
-        return Mathf.FloorToInt(elapsedSeconds * productionPerSec);
+    // 방치 보상 계산: 경과한 시간(초, 상한 적용)에 초당 생산량을 곱해 반환
+    public static int CalculateIdleReward(long lastActiveTicks, float productionPerSec, float capSeconds)
+    {
+        float elapsedSeconds = CalculateElapsedSeconds(lastActiveTicks, capSeconds);
+
+        return Mathf.CeilToInt(elapsedSeconds * productionPerSec); //올림 처리
     }
 
     // UID 생성 기능

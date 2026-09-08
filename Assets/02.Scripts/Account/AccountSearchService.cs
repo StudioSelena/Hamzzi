@@ -5,40 +5,51 @@ using Cysharp.Threading.Tasks;
 
 public class AccountSearchService
 {
-    public async UniTask<bool> TrySearchAccountAsync(string userId)
+    private AccountSearchViewModel _viewModel;
+
+    public AccountSearchService()
     {
-        bool isExist = false;
+        _viewModel = new AccountSearchViewModel();
+        _viewModel.SetService(this);
+    }
 
-        if (userId != "")
+    public AccountSearchViewModel GetViewModel()
+    {
+        return _viewModel;
+    }
+
+    public async UniTask<long> TrySearchAccountAsync(string userId)
+    {
+        long targetUid = 0;
+
+        if (userId == "") return targetUid;
+
+        using (MySqlConnection conn = new MySqlConnection(DBConfig.ConnectionString))
         {
-            using (MySqlConnection conn = new MySqlConnection(DBConfig.ConnectionString))
+            try
             {
-                try
+                await conn.OpenAsync();
+
+                string query = $"SELECT User_UID FROM {DBConfig.UserAccountTable} WHERE User_Id = @userId;";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
-                    await conn.OpenAsync();
+                    cmd.Parameters.AddWithValue("@userId", userId);
 
-                    string query = $"SELECT COUNT(*) FROM {DBConfig.UserGameTable} WHERE userId = @userId;";
+                    object result = await cmd.ExecuteScalarAsync();
 
-                    using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                    if (result != null)
                     {
-                        cmd.Parameters.AddWithValue("@userId", userId);
-
-                        object result = await cmd.ExecuteScalarAsync();
-                        int count = Convert.ToInt32(result);
-
-                        if (count > 0)
-                        {
-                            isExist = true;
-                        }
+                        targetUid = Convert.ToInt64(result);
                     }
                 }
-                catch (Exception ex)
-                {
-                    Debug.LogError(ex.Message);
-                }
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex.Message);
             }
         }
 
-        return isExist;
+        return targetUid;
     }
 }

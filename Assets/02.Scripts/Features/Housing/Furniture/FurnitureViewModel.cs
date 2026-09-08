@@ -1,11 +1,23 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FurnitureViewModel : ViewModelBase
 {
-    public string InstanceID { get; private set; }
     public string FurnitureID { get; private set; }
     public string PrefabPath { get; private set; }
+
+    private string _instanceID;
+    public string InstanceID
+    {
+        get => _instanceID;
+        set
+        {
+            if (_instanceID != value)
+            {
+                _instanceID = value;
+                OnPropertyChanged(nameof(InstanceID));
+            }
+        }
+    }
 
     private string _roomInstanceID;
     public string RoomInstanceID
@@ -30,7 +42,7 @@ public class FurnitureViewModel : ViewModelBase
             if (_localPos != value)
             {
                 _localPos = value;
-                OnPropertyChanged(nameof(_localPos));
+                OnPropertyChanged(nameof(LocalPos));
             }
         }
     }
@@ -44,7 +56,7 @@ public class FurnitureViewModel : ViewModelBase
             if (_size != value)
             {
                 _size = value;
-                OnPropertyChanged(nameof(_size));
+                OnPropertyChanged(nameof(Size));
             }
         }
     }
@@ -58,7 +70,7 @@ public class FurnitureViewModel : ViewModelBase
             if (_rotationAngle != value)
             {
                 _rotationAngle = value;
-                OnPropertyChanged(nameof(_rotationAngle));
+                OnPropertyChanged(nameof(RotationAngle));
             }
         }
     }
@@ -72,7 +84,7 @@ public class FurnitureViewModel : ViewModelBase
             if (_isValid != value)
             {
                 _isValid = value;
-                OnPropertyChanged(nameof(_isValid));
+                OnPropertyChanged(nameof(IsValid));
             }
         }
     }
@@ -99,9 +111,9 @@ public class FurnitureViewModel : ViewModelBase
         }
     }
 
-    public FurnitureViewModel (string furnitureID, string prefabPath, Vector2Int localPos, Vector2Int size)
+    public FurnitureViewModel (string instanceID, string furnitureID, string prefabPath, Vector2Int localPos, Vector2Int size)
     {
-        InstanceID = Guid.NewGuid().ToString();
+        InstanceID = instanceID;
         PrefabPath = prefabPath;
         FurnitureID = furnitureID;
         LocalPos = localPos;
@@ -114,8 +126,9 @@ public class FurnitureViewModel : ViewModelBase
         float currentCenterX = LocalPos.x + Size.x * 0.5f;
         float currentCenterY = LocalPos.y + Size.y * 0.5f;
 
-        Size = new Vector2Int(Size.y, Size.x);
         RotationAngle = (RotationAngle + 90) % 360;
+        int temp = Size.x;
+        Size = new Vector2Int(Size.y, temp);
 
         LocalPos = new Vector2Int(Mathf.RoundToInt(currentCenterX - Size.x * 0.5f), Mathf.RoundToInt(currentCenterY - Size.y * 0.5f));
     }

@@ -16,7 +16,6 @@ public class HamsterSlot : MonoBehaviour
     [SerializeField] private Color STierColor;
     [SerializeField] private Color ATierColor;
 
-
     private string _hamsterId;
 
     public event Action<string> OnSlotClicked;
@@ -75,5 +74,4 @@ public class HamsterSlot : MonoBehaviour
     {
         OnSlotClicked?.Invoke(_hamsterId);
     }
-
 }

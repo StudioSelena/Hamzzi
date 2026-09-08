@@ -1,56 +1,18 @@
 ﻿using System;
+using UnityEngine;
 
 public class AccountInfoViewModel : ViewModelBase
 {
-    private AccountInfoService _infoService;
-    private FriendService _friendService;
+    private AccountInfoService _service;
 
     public event Action OnCompleteLoadInfo;
-
     public event Action OnCompleteAddFriend;
     public event Action OnFailAddFriend;
-
-    private string _myUserId = "";
-    public string MyUserId
-    {
-        get
-        {
-            return _myUserId;
-        }
-        set
-        {
-            if (_myUserId != value)
-            {
-                _myUserId = value;
-                OnPropertyChanged(nameof(MyUserId));
-            }
-        }
-    }
-
-    private string _targetUserId = "";
-    public string TargetUserId
-    {
-        get
-        {
-            return _targetUserId;
-        }
-        set
-        {
-            if (_targetUserId != value)
-            {
-                _targetUserId = value;
-                OnPropertyChanged(nameof(TargetUserId));
-            }
-        }
-    }
 
     private string _displayUserId = "";
     public string DisplayUserId
     {
-        get
-        {
-            return _displayUserId;
-        }
+        get { return _displayUserId; }
         set
         {
             if (_displayUserId != value)
@@ -64,10 +26,7 @@ public class AccountInfoViewModel : ViewModelBase
     private string _displayUserName = "";
     public string DisplayUserName
     {
-        get
-        {
-            return _displayUserName;
-        }
+        get { return _displayUserName; }
         set
         {
             if (_displayUserName != value)
@@ -78,45 +37,77 @@ public class AccountInfoViewModel : ViewModelBase
         }
     }
 
-    public void SetInfoService(AccountInfoService service)
+    private Sprite _displayUserIcon;
+    public Sprite DisplayUserIcon
     {
-        _infoService = service;
+        get { return _displayUserIcon; }
+        set
+        {
+            if (_displayUserIcon != value)
+            {
+                _displayUserIcon = value;
+                OnPropertyChanged(nameof(DisplayUserIcon));
+            }
+        }
     }
 
-    public void SetFriendService(FriendService service)
+    public void SetService(AccountInfoService service)
     {
-        _friendService = service;
+        _service = service;
     }
 
     public async void RequestLoadAccountInfo()
     {
-        if (_infoService != null && _targetUserId != "")
-        {
-            AccountInfoData data = await _infoService.GetAccountInfoAsync(_targetUserId);
+        if (_service == null) return;
 
-            if (data != null)
+        AccountSearchService searchService = ServiceManager.Instance.AccountSearchService;
+        if (searchService == null) return;
+
+        long targetUid = searchService.GetViewModel().TargetUserUid;
+        if (targetUid == 0) return;
+
+        AccountInfoData data = await _service.GetAccountInfoAsync(targetUid);
+
+        if (data != null)
+        {
+            DisplayUserId = data.UserId;
+            DisplayUserName = data.UserName;
+
+            if (data.UserIconId != "")
             {
-                DisplayUserId = data.UserId;
-                DisplayUserName = data.UserName;
-                InvokeCompleteLoadInfo();
+                Sprite loadedSprite = await ResourceManager.Instance.LoadAsset<Sprite>(data.UserIconId);
+                DisplayUserIcon = loadedSprite;
             }
+
+            InvokeCompleteLoadInfo();
         }
     }
 
     public async void RequestAddFriend()
     {
-        if (_friendService != null && _myUserId != "" && _targetUserId != "")
-        {
-            bool isSuccess = await _friendService.TryAddFriendAsync(_myUserId, _targetUserId);
+        LoginService loginService = ServiceManager.Instance.LoginService;
+        if (loginService == null) return;
 
-            if (isSuccess == true)
-            {
-                InvokeCompleteAddFriend();
-            }
-            else
-            {
-                InvokeFailAddFriend();
-            }
+        AccountSearchService searchService = ServiceManager.Instance.AccountSearchService;
+        if (searchService == null) return;
+
+        long myUid = loginService.GetViewModel().UserUID;
+        long targetUid = searchService.GetViewModel().TargetUserUid;
+
+        if (myUid == 0 || targetUid == 0) return;
+
+        FriendService friendService = ServiceManager.Instance.FriendService;
+        if (friendService == null) return;
+
+        bool isSuccess = await friendService.TryAddFriendAsync(myUid, targetUid);
+
+        if (isSuccess)
+        {
+            InvokeCompleteAddFriend();
+        }
+        else
+        {
+            InvokeFailAddFriend();
         }
     }
 

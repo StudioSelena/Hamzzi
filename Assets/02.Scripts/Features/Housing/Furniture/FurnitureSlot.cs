@@ -19,8 +19,21 @@ public class FurnitureSlot : MonoBehaviour
         Button_Select.onClick.AddListener(OnClickSelect);
     }
 
+    private void OnDisable()
+    {
+        if (_furnitureSlotVm != null)
+        {
+            _furnitureSlotVm.PropertyChanged -= OnPropertyChanged_View;
+        }
+    }
+
     public void Bind(FurnitureSlotViewModel furnitureSlotVm, HousingViewModel housingVM)
     {
+        if (_furnitureSlotVm != null)
+        {
+            _furnitureSlotVm.PropertyChanged -= OnPropertyChanged_View;
+        }
+
         var itemData = GameDataManager.Instance.GetData<ItemData>(furnitureSlotVm.ItemDataId);
         if(itemData == null)
         {

@@ -7,30 +7,10 @@ public class SetPlayerNameViewModel : ViewModelBase
     public event Action OnCompleteSetName;
     public event Action OnFailSetName;
 
-    private string _targetUserId = "";
-    public string TargetUserId
-    {
-        get
-        {
-            return _targetUserId;
-        }
-        set
-        {
-            if (_targetUserId != value)
-            {
-                _targetUserId = value;
-                OnPropertyChanged(nameof(TargetUserId));
-            }
-        }
-    }
-
     private string _inputName = "";
     public string InputName
     {
-        get
-        {
-            return _inputName;
-        }
+        get { return _inputName; }
         set
         {
             if (_inputName != value)
@@ -48,18 +28,33 @@ public class SetPlayerNameViewModel : ViewModelBase
 
     public async void RequestSetPlayerName()
     {
-        if (_service != null)
-        {
-            bool isSuccess = await _service.TrySetPlayerNameAsync(_targetUserId, _inputName);
+        if (_service == null) return;
 
-            if (isSuccess == true)
+        LoginService loginService = ServiceManager.Instance.LoginService;
+        if (loginService == null) return;
+
+        long myUid = loginService.GetViewModel().UserUID;
+        if (myUid == 0) return;
+
+        bool isSuccess = await _service.TrySetPlayerNameAsync(myUid, _inputName);
+
+        if (isSuccess)
+        {
+            UserService userService = ServiceManager.Instance.UserService;
+            if (userService != null)
             {
-                InvokeCompleteSetName();
+                UserViewModel userVm = userService.GetUserViewModel();
+                if (userVm != null)
+                {
+                    userVm.UserName = _inputName;
+                }
             }
-            else
-            {
-                InvokeFailSetName();
-            }
+
+            InvokeCompleteSetName();
+        }
+        else
+        {
+            InvokeFailSetName();
         }
     }
 

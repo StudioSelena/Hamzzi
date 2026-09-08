@@ -1,41 +1,55 @@
-﻿// 버튼 클릭 시 순간적으로 커졌다가 줄어드는 펀치 스케일 이펙트 (공용 컴포넌트, 아무 버튼에나 부착)
+﻿// 버튼 클릭 시 순간적으로 커졌다가 줄어드는 펀치 스케일 이펙트 (공용 컴포넌트)
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Button))]
 public class UIButtonPunchEffect : MonoBehaviour
 {
-    private const float PunchScaleMultiplier = 1.15f;
-    private const float ScaleUpDurationSeconds = 0.08f;
-    private const float ScaleDownDurationSeconds = 0.12f;
+    [SerializeField] private Button Button_Target;
+    [SerializeField] private float _punchScaleMultiplier = 1.05f;
+    [SerializeField] private float _scaleUpDurationSeconds = 0.03f;
+    [SerializeField] private float _scaleDownDurationSeconds = 0.05f;
 
-    private Button _button;
     private RectTransform _rectTransform;
     private Vector3 _originalScale;
+    private Sequence _punchSequence;
 
     private void Awake()
     {
-        _button = GetComponent<Button>();
-        _rectTransform = GetComponent<RectTransform>();
-        _originalScale = _rectTransform.localScale;
+        if (Button_Target == null)
+        {
+            Button_Target = this.GetComponentInChildren<Button>(true);
+        }
+
+        _rectTransform = this.GetComponent<RectTransform>();
+
+        if (_rectTransform != null)
+        {
+            _originalScale = _rectTransform.localScale;
+        }
     }
 
     private void OnEnable()
     {
-        _button.onClick.AddListener(OnClickButton);
+        if (Button_Target == null)
+        {
+            return;
+        }
+
+        Button_Target.onClick.AddListener(OnClickButton);
     }
 
     private void OnDisable()
     {
-        if (_button != null)
+        if (Button_Target != null)
         {
-            _button.onClick.RemoveListener(OnClickButton);
+            Button_Target.onClick.RemoveListener(OnClickButton);
         }
+
+        KillPunchSequence();
 
         if (_rectTransform != null)
         {
-            _rectTransform.DOKill();
             _rectTransform.localScale = _originalScale;
         }
     }
@@ -47,11 +61,27 @@ public class UIButtonPunchEffect : MonoBehaviour
 
     private void PlayPunchEffect()
     {
-        _rectTransform.DOKill();
+        if (_rectTransform == null)
+        {
+            return;
+        }
+
+        KillPunchSequence();
         _rectTransform.localScale = _originalScale;
 
-        Sequence punchSequence = DOTween.Sequence();
-        punchSequence.Append(_rectTransform.DOScale(_originalScale * PunchScaleMultiplier, ScaleUpDurationSeconds).SetEase(Ease.Linear));
-        punchSequence.Append(_rectTransform.DOScale(_originalScale, ScaleDownDurationSeconds).SetEase(Ease.Linear));
+        _punchSequence = DOTween.Sequence();
+        _punchSequence.Append(_rectTransform.DOScale(_originalScale * _punchScaleMultiplier, _scaleUpDurationSeconds).SetEase(Ease.OutQuad));
+        _punchSequence.Append(_rectTransform.DOScale(_originalScale, _scaleDownDurationSeconds).SetEase(Ease.InQuad));
+    }
+
+    private void KillPunchSequence()
+    {
+        if (_punchSequence == null)
+        {
+            return;
+        }
+
+        _punchSequence.Kill();
+        _punchSequence = null;
     }
 }

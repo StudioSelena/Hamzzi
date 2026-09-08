@@ -16,6 +16,7 @@ public enum UIType
     LoadingUI,
     TitleUI,
     TitleSettingsUI,
+    InGameSettingsUI,
     InGameUI,
     ShopUI,
     BuildUI,
@@ -29,8 +30,13 @@ public enum UIType
     GachaUI,
     HousingUI,
     FeverTimeCutsceneUI,
+    FeverTimeResultUI,
     WheelUI,
-    DecorUI
+    DecorUI,
+    IdleRewardPopupUI,
+    FriendRequestListUI,
+    CrossUI,
+    ProfileSettingUI,
 }
 
 public static class UIManagerExtension
@@ -105,12 +111,22 @@ public static class UIManagerExtension
 
     public static void OpenFeverTimeCutsceneUI(this UIManager uiManager)
     {
-        uiManager.OpenUI(UIRootType.VeryFrontUI, UIType.FeverTimeCutsceneUI);
+        uiManager.OpenUI(UIRootType.PopupUI, UIType.FeverTimeCutsceneUI);
     }
 
     public static void CloseFeverTimeCutsceneUI(this UIManager uiManager)
     {
-        uiManager.CloseUI(UIRootType.VeryFrontUI, UIType.FeverTimeCutsceneUI);
+        uiManager.CloseUI(UIRootType.PopupUI, UIType.FeverTimeCutsceneUI);
+    }
+
+    public static void OpenFeverTimeResultUI(this UIManager uiManager)
+    {
+        uiManager.OpenUI(UIRootType.PopupUI, UIType.FeverTimeResultUI);
+    }
+
+    public static void CloseFeverTimeResultUI(this UIManager uiManager)
+    {
+        uiManager.CloseUI(UIRootType.PopupUI, UIType.FeverTimeResultUI);
     }
 
     public static void OpenDecorUI(this UIManager uiManager)
@@ -151,5 +167,27 @@ public static class UIManagerExtension
     public static void CloseWheelUI(this UIManager uiManager)
     {
         uiManager.CloseUI(UIRootType.PopupUI, UIType.WheelUI);
+    }
+
+    public static void OpenSetNameUI(this UIManager uiManager)
+    {
+        uiManager.OpenUI(UIRootType.PopupUI, UIType.SetPlayerNameUI);
+    }
+
+    public static void CloseSetNameUI(this UIManager uiManager)
+    {
+        uiManager.CloseUI(UIRootType.PopupUI, UIType.SetPlayerNameUI);
+    }
+
+    public static void OpenIdleRewardPopupUI(this UIManager uiManager, int rewardAmount, float elapsedSeconds, float capSeconds)
+    {
+        UIBase openedUI = uiManager.OpenUI(UIRootType.PopupUI, UIType.IdleRewardPopupUI);
+        IdleRewardPopupUI popupUI = openedUI as IdleRewardPopupUI;
+        popupUI.SetRewardInfo(rewardAmount, elapsedSeconds, capSeconds);
+    }
+
+    public static void CloseIdleRewardPopupUI(this UIManager uiManager)
+    {
+        uiManager.CloseUI(UIRootType.PopupUI, UIType.IdleRewardPopupUI);
     }
 }

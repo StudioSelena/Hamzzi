@@ -37,6 +37,7 @@ public class HousingUI : ViewBase
     [SerializeField] private Button Button_Assign;
 
     private HousingViewModel _housingVM;
+    private HousingView _housingView;
 
     private void Awake()
     {
@@ -58,6 +59,16 @@ public class HousingUI : ViewBase
     {
         HousingViewModel housingVM = ServiceManager.Instance.HousingService.GetHousingViewModel();
         BindViewModel(housingVM);
+
+        CreateGrid().Forget();
+    }
+
+    private void OnEnable()
+    {
+        if (_housingView != null)
+        {
+            _housingView.gameObject.SetActive(true);
+        }
     }
 
     public void BindViewModel(HousingViewModel housingVM)
@@ -123,63 +134,31 @@ public class HousingUI : ViewBase
 
     private void UpdateState()
     {
-        if (_housingVM.RequestAssignHamster != null)
+        if (_housingVM.TargetRoom != null && _housingVM.CurrentState == HousingState.SelectRoom)
         {
-            Panel_Info.SetActive(false);
-            Panel_FurnitureBar.SetActive(false);
-
-            Button_Exit.gameObject.SetActive(false);
-            Button_Rotation.gameObject.SetActive(false);
-            Button_Confirm.gameObject.SetActive(false);
-            Button_Cancel.gameObject.SetActive(false);
-            Button_ExitMode.gameObject.SetActive(false);
-            Button_Remove.gameObject.SetActive(false);
-            Button_Assign.gameObject.SetActive(false);
+            _housingVM.CurrentState = HousingState.Placing;
+            return;
         }
-        else if (_housingVM.CurrentState == HousingState.SelectRoom)
+
+        bool isAssigning = _housingVM.RequestAssignHamster != null;
+        bool isSelectRoom = _housingVM.CurrentState == HousingState.SelectRoom;
+        bool isPlacing = _housingVM.FurnitureVM != null;
+        bool isEditing = _housingVM.CurrentState == HousingState.Editing;
+
+        Panel_Info.SetActive(isSelectRoom && !isAssigning);
+        Panel_FurnitureBar.SetActive(!isAssigning && !isSelectRoom && !isPlacing);
+
+        Button_Exit.gameObject.SetActive(!isAssigning && !isSelectRoom && !isPlacing);
+        Button_Rotation.gameObject.SetActive(!isAssigning && isPlacing);
+        Button_Confirm.gameObject.SetActive(!isAssigning && isPlacing);
+        Button_Cancel.gameObject.SetActive(!isAssigning && isPlacing);
+        Button_ExitMode.gameObject.SetActive(!isAssigning && isSelectRoom);
+        Button_Remove.gameObject.SetActive(!isAssigning && isPlacing && isEditing);
+        Button_Assign.gameObject.SetActive(!isAssigning && isPlacing && _housingVM.CanAssignCurrentFurniture);
+
+        if (isPlacing)
         {
-            Panel_Info.SetActive(true);
-
-            Panel_FurnitureBar.SetActive(false);
-            Button_Exit.gameObject.SetActive(false);
-
-            Button_Rotation.gameObject.SetActive(false);
-            Button_Confirm.gameObject.SetActive(false);
-            Button_Cancel.gameObject.SetActive(false);
-            Button_ExitMode.gameObject.SetActive(true);
-            Button_Remove.gameObject.SetActive(false);
-        }
-        else if (_housingVM.FurnitureVM != null)
-        {
-            Panel_Info.SetActive(false);
-
-            Panel_FurnitureBar.SetActive(false);
-            Button_Exit.gameObject.SetActive(false);
-
-            Button_Rotation.gameObject.SetActive(true);
-            Button_Confirm.gameObject.SetActive(true);
-            Button_Cancel.gameObject.SetActive(true);
-            Button_ExitMode.gameObject.SetActive(false);
-            Button_Assign.gameObject.SetActive(_housingVM.CanAssignCurrentFurniture);
-
-            bool isEditing = _housingVM.CurrentState == HousingState.Editing;
-            Button_Remove.gameObject.SetActive(isEditing);
-
             Button_Confirm.interactable = _housingVM.CanConfirm;
-        }
-        else
-        {
-            Panel_Info.SetActive(false);
-
-            Panel_FurnitureBar.SetActive(true);
-            Button_Exit.gameObject.SetActive(true);
-
-            Button_Rotation.gameObject.SetActive(false);
-            Button_Confirm.gameObject.SetActive(false);
-            Button_Cancel.gameObject.SetActive(false);
-            Button_ExitMode.gameObject.SetActive(false);
-            Button_Remove.gameObject.SetActive(false);
-            Button_Assign.gameObject.SetActive(false);
         }
     }
 
@@ -204,6 +183,7 @@ public class HousingUI : ViewBase
 
             GameObject slot = await GameObjectManager.Instance.CreateObjectAsync("FurnitureSlot", $"Prefabs/UI/FurnitureSlot", Vector3.zero);
             slot.transform.SetParent(Parent_Slot.transform, false);
+            slot.transform.localScale = Vector3.one;
 
             FurnitureSlot furnitureSlot = slot.GetComponent<FurnitureSlot>();
             furnitureSlot.Bind(furnitureSlotVm, _housingVM);
@@ -256,6 +236,9 @@ public class HousingUI : ViewBase
     {
         if (_housingVM.CurrentViewMode == HousingViewMode.Garden)
         {
+            _housingView.ClearRoomGrid();
+            _housingView.gameObject.SetActive(false);
+
             UIManager.Instance.CloseHousingUI();
             UIManager.Instance.OpenDecorUI();
         }
@@ -289,6 +272,9 @@ public class HousingUI : ViewBase
 
         _housingVM.EnterOverviewMode();
 
+        _housingView.ClearRoomGrid();
+        _housingView.gameObject.SetActive(false);
+
         UIManager.Instance.CloseHousingUI();
         UIManager.Instance.OpenDecorUI();
     }
@@ -301,5 +287,15 @@ public class HousingUI : ViewBase
     private void OnClickAssign()
     {
         _housingVM.OpenAssignUI();
+    }
+
+    private async UniTask CreateGrid()
+    {
+        GameObject prefab = await GameObjectManager.Instance.CreateObjectAsync("GridTile", "Prefabs/Housing/GridTile", Vector3.zero);
+
+        if (_housingView == null)
+        {
+            _housingView = prefab.GetComponent<HousingView>();
+        }
     }
 }

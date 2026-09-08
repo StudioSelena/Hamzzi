@@ -14,6 +14,11 @@ public class HamsterInput : MonoBehaviour
 
     private void Update()
     {
+        if (UIManager.Instance.IsOpenUI(UIType.HousingUI) || UIManager.Instance.IsOpenUI(UIType.BuildUI))
+        {
+            return;
+        }
+
 #if UNITY_EDITOR || UNITY_STANDALONE
         if (Input.GetMouseButtonDown(0))
         {
@@ -30,7 +35,7 @@ public class HamsterInput : MonoBehaviour
 
     private void CheckTouch(Vector2 screenPos)
     {
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        if (EventSystem.current.IsPointerOverGameObject())
         {
             return;
         }
@@ -41,8 +46,17 @@ public class HamsterInput : MonoBehaviour
         {
             if (hit.transform == transform)
             {
-                Debug.Log(gameObject.name);
                 _cameraController.StartFollowHamster(transform);
+
+                if (UIManager.Instance.IsOpenUI(UIType.InGameUI))
+                {
+                    UIBase uiBase = UIManager.Instance.GetOpenUI(UIRootType.MainUI, UIType.InGameUI);
+
+                    if (uiBase is InGameUI inGameUI)
+                    {
+                        inGameUI.UpdateButton();
+                    }
+                }
             }
         }
     }

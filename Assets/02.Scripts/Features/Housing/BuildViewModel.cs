@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BuildViewModel : ViewModelBase
@@ -106,6 +107,17 @@ public class BuildViewModel : ViewModelBase
         }
     }
 
+    private List<string> _destroyedInstanceIDs = new List<string>();
+    public List<string> DestroyedInstanceIDs
+    {
+        get => _destroyedInstanceIDs;
+        set
+        {
+            _destroyedInstanceIDs = value;
+            OnPropertyChanged(nameof(DestroyedInstanceIDs));
+        }
+    }
+
     public void ChooseRoom(RoomViewModel room)
     {
         if (room == null || room.BuildType != BuildType.Room)
@@ -143,79 +155,114 @@ public class BuildViewModel : ViewModelBase
         }
 
         RoomViewModel target = SelectRoom;
+
+        if (target.FurnitureList != null && target.FurnitureList.Count > 0)
+        {
+            var furnituresToReturn = new List<FurnitureViewModel>(target.FurnitureList);
+
+            foreach (var furniture in furnituresToReturn)
+            {
+                if (!string.IsNullOrEmpty(furniture.AssignHamsterID))
+                {
+                    furniture.AssignHamsterID = null;
+                }
+
+                ServiceManager.Instance.HousingService.RefreshFurnitureBuff();
+
+                ServiceManager.Instance.HousingService.GetHousingViewModel().DestroyFurniture = furniture;
+                ReturnFurniture(furniture.FurnitureID).Forget();
+            }
+
+            target.FurnitureList.Clear();
+        }
+
+        List<Vector2Int> connectedAislePositions = new List<Vector2Int>();
+
+        foreach (DoorData doorData in target.DoorDataList)
+        {
+            DoorInfo doorInfo = target.GetDoorInfo(doorData.Offset);
+
+            if (Builds.TryGetValue(doorInfo.OutsidePos, out RoomViewModel aisleVM) && aisleVM.BuildType == BuildType.Aisle)
+            {
+                connectedAislePositions.Add(doorInfo.OutsidePos);
+            }
+        }
+
         DeselectRoom();
-
         RemoveBuild(target);
-        ClearAisle();
+        ClearAisle(connectedAislePositions);
+
+        ServiceManager.Instance.BuildService.RefreshAisleNavMesh(Builds);
+        ServiceManager.Instance.NetworkBuildService.RequestSaveHousingData();
     }
 
-    public void ClearAisle()
+    public void ClearAisle(List<Vector2Int> startPositions)
     {
-        while (true)
+        HashSet<RoomViewModel> removeAisles = new HashSet<RoomViewModel>();
+        Queue<RoomViewModel> queue = new Queue<RoomViewModel>();
+
+        foreach (Vector2Int pos in startPositions)
         {
-            HashSet<RoomViewModel> deadEndAisles = new HashSet<RoomViewModel>();
-            HashSet<RoomViewModel> aisles = new HashSet<RoomViewModel>();
-
-            foreach (var pair in Builds)
+            if (Builds.TryGetValue(pos, out RoomViewModel aisle))
             {
-                if (pair.Value.BuildType == BuildType.Aisle && !pair.Value.IsDefault)
+                if (aisle.BuildType == BuildType.Aisle && !aisle.IsDefault && removeAisles.Add(aisle))
                 {
-                    aisles.Add(pair.Value);
+                    queue.Enqueue(aisle);
                 }
-            }
-
-            foreach (var vm in aisles)
-            {
-                if (CountAisle(vm) <= 1)
-                {
-                    deadEndAisles.Add(vm);
-                }
-            }
-
-            if (deadEndAisles.Count == 0)
-            {
-                break;
-            }
-
-            foreach (var aisle in deadEndAisles)
-            {
-                RemoveBuild(aisle);
             }
         }
-    }
 
-    private int CountAisle(RoomViewModel aisleVM)
-    {
-        int count = 0;
-
-        for (int i = 0; i < _directions.Length; i++)
+        while (queue.Count > 0)
         {
-            foreach (Vector2Int tile in GetEdgeTiles(aisleVM.OriginPos, aisleVM.Size, i))
+            RoomViewModel aisle = queue.Dequeue();
+
+            for (int i = 0; i < _directions.Length; i++)
             {
-                Vector2Int targetPos = tile + _directions[i];
+                List<Vector2Int> edgeTiles = GetEdgeTiles(aisle.OriginPos, aisle.Size, i);
 
-                if (Builds.TryGetValue(targetPos, out RoomViewModel targetVM) && targetVM != aisleVM)
+                foreach (Vector2Int tile in edgeTiles)
                 {
-                    if (targetVM.BuildType == BuildType.Aisle)
-                    {
-                        count++;
-                    }
-                    else if (targetVM.BuildType == BuildType.Room && !targetVM.IsDefault)
-                    {
-                        Vector2Int doorPos = targetVM.GetNearDoor(tile);
+                    Vector2Int nextPos = tile + _directions[i];
 
-                        if (targetPos == doorPos)
-                        {
-                            count++;
-                        }
+                    if (!Builds.TryGetValue(nextPos, out RoomViewModel next))
+                    {
+                        continue;
+                    }
+
+                    if (next.BuildType == BuildType.Room)
+                    {
+                        continue;
+                    }
+
+                    if (next.BuildType != BuildType.Aisle || next.IsDefault)
+                    {
+                        continue;
+                    }
+
+                    if (removeAisles.Add(next))
+                    {
+                        queue.Enqueue(next);
                     }
                 }
             }
         }
 
-        return count;
+        foreach (RoomViewModel aisle in removeAisles)
+        {
+            RemoveBuild(aisle);
+        }
     }
 
+    private async UniTaskVoid ReturnFurniture(string furnitureId)
+    {
+        var itemData = GameDataManager.Instance.GetData<ItemData>(furnitureId);
+
+        Sprite icon = await ResourceManager.Instance.LoadAsset<Sprite>(itemData.IconPath);
+
+        ServiceManager.Instance.HousingService.AddItem(furnitureId, icon);
+    }
+
+    
     public void EnterBuildMode()
     {
         CancelBuildMode();
@@ -241,6 +288,10 @@ public class BuildViewModel : ViewModelBase
         _waitingAisle.Clear();
         CanConfirm = false;
         SelectType = BuildType.None;
+
+        ServiceManager.Instance.BuildService.RefreshAisleNavMesh(Builds);
+
+        ServiceManager.Instance.NetworkBuildService.RequestSaveHousingData();
     }
 
     public void CancelBuildMode()
@@ -279,12 +330,16 @@ public class BuildViewModel : ViewModelBase
             aisleVM.SetWallActive(0, true);
             aisleVM.Refresh();
         }
+
+        ServiceManager.Instance.BuildService.RefreshAisleNavMesh(Builds);
     }
 
     public bool TryBuildRoom(Vector2Int pos)
     {
         pos = SnapAisle(pos);
-        RoomViewModel newRoom = new RoomViewModel(BuildType.Room, pos);
+
+        string uid = GameUtil.GenerateUID().ToString();
+        RoomViewModel newRoom = new RoomViewModel(uid,BuildType.Room, pos);
 
         if (!CanPlaceRoom(pos, newRoom.Size))
         {
@@ -307,7 +362,9 @@ public class BuildViewModel : ViewModelBase
     private void BuildDefaultRoom(Vector2Int pos)
     {
         pos = SnapAisle(pos);
-        RoomViewModel newRoom = new RoomViewModel(BuildType.Room, pos);
+
+        string uid = GameUtil.GenerateUID().ToString();
+        RoomViewModel newRoom = new RoomViewModel(uid, BuildType.Room, pos);
 
         newRoom.IsReady = true;
         newRoom.IsDefault = true;
@@ -325,7 +382,8 @@ public class BuildViewModel : ViewModelBase
             return;
         }
 
-        RoomViewModel newAisle = new RoomViewModel(BuildType.Aisle, pos);
+        string uid = GameUtil.GenerateUID().ToString();
+        RoomViewModel newAisle = new RoomViewModel(uid, BuildType.Aisle, pos);
         newAisle.IsDefault = true;
         RegisterAisle(newAisle, pos);
 
@@ -365,6 +423,12 @@ public class BuildViewModel : ViewModelBase
         {
             Vector2Int aislePos = SnapAisle(rawPos);
 
+            if (Builds.TryGetValue(aislePos, out var existingVM) && existingVM.BuildType == BuildType.Aisle)
+            {
+                UpdateConnection(aislePos);
+                continue;
+            }
+
             if (IsAreaRoom(aislePos, new Vector2Int(AISLE_SIZE, AISLE_SIZE)))
             {
                 continue;
@@ -372,7 +436,8 @@ public class BuildViewModel : ViewModelBase
 
             if (!IsAreaOccupied(aislePos, new Vector2Int(AISLE_SIZE, AISLE_SIZE)))
             {
-                RoomViewModel newAisle = new RoomViewModel(BuildType.Aisle, aislePos);
+                string uid = GameUtil.GenerateUID().ToString();
+                RoomViewModel newAisle = new RoomViewModel(uid, BuildType.Aisle, aislePos);
                 RegisterAisle(newAisle, aislePos);
 
                 _waitingAisle.Add(newAisle);
@@ -399,7 +464,7 @@ public class BuildViewModel : ViewModelBase
     private Vector2Int SnapAisle(Vector2Int pos)
     {
         int x = Mathf.FloorToInt(pos.x / (float)AISLE_SIZE) * AISLE_SIZE;
-        int y = Mathf.FloorToInt(pos.y / (float)AISLE_SIZE) * AISLE_SIZE;
+        int y = Mathf.FloorToInt((pos.y + 1) / (float)AISLE_SIZE) * AISLE_SIZE;
 
         return new Vector2Int(x, y);
     }
@@ -443,12 +508,6 @@ public class BuildViewModel : ViewModelBase
             for (int y = 0; y < aisle.Size.y; y++)
             {
                 Vector2Int tile = pos + new Vector2Int(x, y);
-
-                if (Builds.TryGetValue(tile, out var existing) && existing.BuildType == BuildType.Room)
-                {
-                    continue;
-                }
-
                 Builds[tile] = aisle;
             }
         }
@@ -655,7 +714,7 @@ public class BuildViewModel : ViewModelBase
 
     private bool CanPlaceRoom(Vector2Int pos, Vector2Int size)
     {
-        if (pos.y + size.y > 20 || pos.y < -40 || pos.x < -60 || pos.x + size.x > 60)
+        if (pos.y + size.y > 10 || pos.y < -40 || pos.x < -60 || pos.x + size.x > 60)
         {
             return false;
         }

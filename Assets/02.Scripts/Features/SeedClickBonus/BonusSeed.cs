@@ -1,4 +1,5 @@
 ﻿// 클릭 시 보상을 지급하고 일정 시간 미클릭 시 자동 소멸하는 보너스 씨앗
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 

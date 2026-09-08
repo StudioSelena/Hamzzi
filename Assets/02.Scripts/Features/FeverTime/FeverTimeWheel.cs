@@ -13,7 +13,7 @@ public class FeverTimeWheel : MonoBehaviour
     private HamsterData _currentHamsterData;
     private float _triggerIntervalSec;
 
-    private void Start()
+    private void OnEnable()
     {
         FeverTimeManager.Instance.OnFeverTimeEnded += ResetTimerForNextFever;
         UpdateSparkleEffect();

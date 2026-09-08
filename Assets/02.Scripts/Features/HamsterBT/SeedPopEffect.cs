@@ -40,7 +40,7 @@ public class SeedPopEffect : MonoBehaviour
     {
         // GameObjectManager가 풀에서 꺼낸 직후 위치를 나중에 세팅하기 때문에
         // 한 프레임 기다렸다가 최종 위치 기준으로 연출을 시작해야 함
-        await UniTask.Yield();
+        await UniTask.Yield(this.GetCancellationTokenOnDestroy());
 
         PlayPopEffect();
     }

@@ -20,9 +20,10 @@ public class CollectionView : UIBase
     [SerializeField] private Transform SlotContent;
 
     [Header("햄스터 정보")]
-    [SerializeField] private GameObject HamsterModelPrefab;
-    [SerializeField] private CollectionHamsterRotate HamsterRotate;
+    [SerializeField] private HamsterModelRotate HamsterRotate;
     [SerializeField] private UIButton KickButton;
+    [SerializeField] private KickUI KickUI;
+    [SerializeField] private RawImage HamsterModelImage;
     [SerializeField] private TextMeshProUGUI HamsterCount;
     [SerializeField] private TextMeshProUGUI HamsterName;
     [SerializeField] private TextMeshProUGUI HamsterAbility;
@@ -33,6 +34,19 @@ public class CollectionView : UIBase
     private HamsterForm _modelForm;
 
     private CollectionViewModel _collectionViewModel;
+    private HamsterViewModel _hamsterViewModel;
+    private HamsterModelViewModel _hamsterModelViewModel;
+
+    private void Awake()
+    {
+        long userUID = ServiceManager.Instance.LoginService.GetViewModel().UserUID;
+        _collectionViewModel = ServiceManager.Instance.CollectionService.GetCollectionViewModel(userUID);
+        _hamsterViewModel = ServiceManager.Instance.CollectionService.GetHamsterViewModel();
+        _hamsterModelViewModel = ServiceManager.Instance.HamsterModelService.GetHamsterModelViewModel();
+
+        var hamsterRender = ServiceManager.Instance.HamsterModelService.HamsterTexture;
+        HamsterModelImage.texture = hamsterRender;
+    }
 
     private void OnEnable()
     {
@@ -44,24 +58,21 @@ public class CollectionView : UIBase
         KickButton.BindOnClickButtonEvent(KickHamster);
 
         // 수집 데이터들 View에 표시
-        _collectionViewModel = ServiceManager.Instance.CollectionService.GetCollectionViewModel();
         _collectionViewModel.PropertyChanged += OnPropertyChanged;
         _collectionViewModel.ContainerPropertyChanged += OnContainerPropChanged;
-        _collectionViewModel.InvokeOnceOnInit();
-        
+
         // 슬롯이 없다면 초기화
         InitCollectionList();
         ShowHamsterList();
 
+        // 슬롯 업데이트
         UpdateHamsterSlot();
         UpdateFaceSlot();
 
-        if(_modelForm == null)
-        {
-            var modelObject = Instantiate(HamsterModelPrefab);
-            _modelForm = modelObject.GetComponentInChildren<HamsterForm>();
-            HamsterRotate.SetHamsterRoot(_modelForm.transform);
-        }
+        _collectionViewModel.InitInvokePropertyChanged();
+        ServiceManager.Instance.HamsterModelService.SetHamsterAnimator("IdleTrigger");
+
+        KickUI.gameObject.SetActive(false);
     }
 
     private void OnDisable()
@@ -113,8 +124,6 @@ public class CollectionView : UIBase
         {
             case nameof(CollectionViewModel.CollectedHamsterIdList):
                 UpdateHamsterSlot();
-                break;
-            case nameof(CollectionViewModel.AllHamsterIdList):
                 break;
             case nameof(CollectionViewModel.CurrentSelectHamsterId):
                 UpdateHamsterInfo();
@@ -169,7 +178,7 @@ public class CollectionView : UIBase
 
     private void InitHamsterList()
     {
-        List<string> allHamsterList = _collectionViewModel.AllHamsterIdList;
+        List<string> allHamsterList = _hamsterViewModel.AllHamsterIdList;
 
         if (_spawnedHamsterSlotList.Count > 0)
             return;
@@ -202,7 +211,8 @@ public class CollectionView : UIBase
 
     private void InitFaceList()
     {
-        List<string> allFaceList = _collectionViewModel.AllFaceIdList;
+        List<string> allFaceList = _hamsterViewModel.AllFaceIdList;
+        Debug.Log("얼굴 초기화");
 
         if (_spawnedFaceSlotList.Count > 0)
             return;
@@ -336,8 +346,8 @@ public class CollectionView : UIBase
 
     private void ChangedHamsterModel()
     {
-        if(_modelForm != null)
-            _modelForm.SetBodyMesh(_collectionViewModel.CurrentSelectHamsterId);
+        string hamsterId = _collectionViewModel.CurrentSelectHamsterId;
+        _hamsterModelViewModel.HamsterId = hamsterId;
     }
 
     private void ChangedFaceModel()
@@ -345,8 +355,7 @@ public class CollectionView : UIBase
         string faceId = _collectionViewModel.CurrentSelectedHamsterFaceId;
         string hamsterId = _collectionViewModel.CurrentSelectHamsterId;
 
-        if (_modelForm != null)
-            _modelForm.SetFaceMesh(faceId);
+        _hamsterModelViewModel.FaceId = faceId;
 
         int count = 0;
         if (_collectionViewModel.CollectedFaceByHamsterList.TryGetValue(hamsterId, out var faceDict))
@@ -359,10 +368,7 @@ public class CollectionView : UIBase
 
     private void KickHamster()
     {
-        string currentHamsterId = _collectionViewModel.CurrentSelectHamsterId;
-        string currentfaceId = _collectionViewModel.CurrentSelectedHamsterFaceId;
-
-        _collectionViewModel.RemoveCollectedHamsterList(currentHamsterId, currentfaceId);
+        KickUI.gameObject.SetActive(true);
     }
 
     private void UpdateHamsterInfo()
@@ -379,27 +385,3 @@ public class CollectionView : UIBase
         HamsterAbility.text = $"{hamsterData.CollectSpeed}";
     }
 }
-
-
-// 그냥 유니크 키가 발급되어야 할 때 사용하려고 만든 것 (의미가 있는 건 아니므로 사용만 하세요)
-//public static long GenerateUniqueId()
-//{
-//    long newId = DateTime.UtcNow.Ticks;
-
-//    // 원자적 연산으로 안전하게 ID 갱신
-//    while (true)
-//    {
-//        long lastId = Volatile.Read(ref _lastId);
-
-//        // 만약 현재 시간이 이전 ID보다 작거나 같다면 (루프가 너무 빠른 경우 포함)
-//        // 이전 ID + 1로 강제 설정하여 중복 방지
-//        long idToAssign = (newId <= lastId) ? lastId + 1 : newId;
-
-//        // _lastId가 내가 읽은 시점과 같다면 idToAssign으로 교체 (성공 시 루프 탈출)
-//        if (Interlocked.CompareExchange(ref _lastId, idToAssign, lastId) == lastId)
-//        {
-//            return idToAssign;
-//        }
-//        // 그 사이 다른 스레드가 값을 바꿨다면 다시 시도
-//    }
-//}

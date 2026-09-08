@@ -154,7 +154,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -349,23 +349,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7240590696019398775, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.8378723
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7240590696019398775, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.127386
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7240590696019398775, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.739719
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 7240590696019398775, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.999982
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7240590696019398775, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.005999155
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7240590696019398775, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
       propertyPath: m_LocalRotation.y
@@ -387,6 +387,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8383616873101771492, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
+      propertyPath: orthographic
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383616873101771492, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
+      propertyPath: orthographic size
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8383616873101771492, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
+      propertyPath: m_projectionMatrixMode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9203648329127457208, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
       propertyPath: Size_Ortho
       value: 15
@@ -398,6 +410,14 @@ PrefabInstance:
     - target: {fileID: 9203648329127457208, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
       propertyPath: Size_MinOrtho
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9203648329127457208, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
+      propertyPath: Zoom_Sensitive
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 9203648329127457208, guid: 220123a2b3a63ac46a24a63f0f38aab7, type: 3}
+      propertyPath: _priorityLayerMask.m_Bits
+      value: 128
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

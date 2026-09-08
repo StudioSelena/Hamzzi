@@ -8,34 +8,6 @@ public class CollectionViewModel : ViewModelBase, IContainerPropertyChanged<stri
 {
     public event Action<string, ContainerEventType, string> ContainerPropertyChanged;
 
-    private List<string> _allHamsterIdList = new List<string>();
-    public List<string> AllHamsterIdList
-    {
-        get { return _allHamsterIdList; }
-        set
-        {
-            if(_allHamsterIdList != value)
-            {
-                _allHamsterIdList = value;
-                OnPropertyChanged(nameof(AllHamsterIdList));
-            }
-        }
-    }
-
-    private List<string> _allFaceIdList = new List<string>();
-    public List<string> AllFaceIdList
-    {
-        get { return _allFaceIdList; }
-        set
-        {
-            if(_allFaceIdList != value)
-            {
-                _allFaceIdList = value;
-                OnPropertyChanged(nameof(AllFaceIdList));
-            }
-        }
-    }
-
     // 보유 중인 햄스터의 상세 데이터 저장
     private Dictionary<long, HamsterSave> _collectedHamsterList = new Dictionary<long, HamsterSave>();
     public Dictionary<long, HamsterSave> CollectedHamsterList
@@ -43,7 +15,7 @@ public class CollectionViewModel : ViewModelBase, IContainerPropertyChanged<stri
         get { return _collectedHamsterList; }
         set
         {
-            if(_collectedHamsterList != value)
+            if (_collectedHamsterList != value)
             {
                 _collectedHamsterList = value;
                 OnPropertyChanged(nameof(CollectedHamsterList));
@@ -108,12 +80,8 @@ public class CollectionViewModel : ViewModelBase, IContainerPropertyChanged<stri
         }
     }
 
-    public void InvokeOnceOnInit()
+    public void InitInvokePropertyChanged()
     {
-        OnPropertyChanged(nameof(AllHamsterIdList));
-        OnPropertyChanged(nameof(AllFaceIdList));
-        OnPropertyChanged(nameof(CollectedHamsterList));
-        OnPropertyChanged(nameof(CollectedHamsterIdList));
         OnPropertyChanged(nameof(CurrentSelectHamsterId));
         OnPropertyChanged(nameof(CurrentSelectedHamsterFaceId));
     }

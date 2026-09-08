@@ -11,6 +11,15 @@ public class ServiceManager : SingletonBase<ServiceManager>
     public NetworkGachaService GachaService { get; private set; }
     public LoginService LoginService { get; private set; }
     public FriendListService FriendListService { get; private set; }
+    public AccountSearchService AccountSearchService { get; private set; }
+    public FriendService FriendService { get; private set; }
+    public AccountInfoService AccountInfoService { get; private set; }
+    public SetPlayerNameService SetPlayerNameService { get; private set; }
+    public NetworkBuildService NetworkBuildService { get; private set; }
+    public FriendRequestService FriendRequestService { get; private set; }
+    public VisitedUserService VisitedUserService { get; private set; }
+    public ProfileSettingService ProfileSettingService { get; private set; }
+    public HamsterModelService HamsterModelService { get; private set; }
 
     public void Start()
     {
@@ -25,9 +34,20 @@ public class ServiceManager : SingletonBase<ServiceManager>
         InitGachaService();
         InitLoginService();
         InitFriendListService();
+        InitUserService();
 
         LoginService.GetViewModel().OnCompleteLogin += LoadDataFromDB;
-        InitUserService();
+        LoginService.GetViewModel().OnCompleteLogin += LoadInventory;
+
+        InitAccountSearchService();
+        InitFriendService();
+        InitAccountInfoService();
+        InitSetPlayerNameService();
+        InitNetworkBuildService();
+        InitFriendRequestService();
+        InitVisitedUserService();
+        InitProfileSettingService();
+        InitModelViewrService();
     }
 
     private void InitShopService()
@@ -40,6 +60,11 @@ public class ServiceManager : SingletonBase<ServiceManager>
         BuildService = new BuildService();
     }
 
+    private void InitNetworkBuildService()
+    {
+        NetworkBuildService = new NetworkBuildService();
+    }
+
     private void InitHousingService()
     {
         HousingService = new HousingService();
@@ -48,7 +73,8 @@ public class ServiceManager : SingletonBase<ServiceManager>
     private void InitCollectionService()
     {
         CollectionService = new NetworkCollectionService();
-        CollectionService.GetCollectionViewModel();
+        //CollectionService.GetCollectionViewModel();
+        CollectionService.GetHamsterViewModel();
     }
 
     private void InitGachaService()
@@ -72,12 +98,66 @@ public class ServiceManager : SingletonBase<ServiceManager>
         FriendListService = new FriendListService();
     }
 
+    private void InitAccountSearchService()
+    {
+        AccountSearchService = new AccountSearchService();
+    }
+
+    private void InitFriendService()
+    {
+        FriendService = new FriendService();
+    }
+
+    private void InitAccountInfoService()
+    {
+        AccountInfoService = new AccountInfoService();
+    }
+
+    private void InitSetPlayerNameService()
+    {
+        SetPlayerNameService = new SetPlayerNameService();
+    }
+
+    private void InitFriendRequestService()
+    {
+        FriendRequestService = new FriendRequestService();
+    }
+
+    private void InitVisitedUserService()
+    {
+        VisitedUserService = new VisitedUserService();
+    }
+
+    private void InitProfileSettingService()
+    {
+        ProfileSettingService = new ProfileSettingService();
+    }
+
+    private void InitModelViewrService()
+    {
+        HamsterModelService = new HamsterModelService();
+        HamsterModelService.GetHamsterModelViewModel();
+    }
+
     public void LoadDataFromDB()
     {
         var loginVM = LoginService.GetViewModel();
         long userUID = loginVM.UserUID;
 
         Debug.Log($"User UID : {userUID}");
-        CollectionService.LoadHamsterCollectionData(userUID).Forget();
+        CollectionService.LoadHamsterCollectionData(userUID).Forget();  
+        HamsterModelService.LoadHamsterModel().Forget();
+        HamsterManager.Instance.Init();
+        UserService.InitUser(userUID).Forget();
+
+        CollectionService.SetCurrentCollectionViewModel(userUID);
+    }
+
+    public void LoadInventory()
+    {
+        var loginVM = LoginService.GetViewModel();
+        long userUID = loginVM.UserUID;
+
+        HousingService.LoadInventory(userUID).Forget();
     }
 }

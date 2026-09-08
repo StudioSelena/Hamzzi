@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c02bb70996b49eba31d0c206e28da24, type: 3}
   m_Name: Hamster_BT Blackboard
   m_EditorClassIdentifier: Unity.Behavior::Unity.Behavior.RuntimeBlackboardAsset
-  VersionTimestamp: 639219752684799842
+  VersionTimestamp: 639232558430820431
   AssetID:
     m_Value0: 3777410704038748602
     m_Value1: 6605231624724646024
@@ -22,6 +22,7 @@ MonoBehaviour:
     - rid: 5402918916675862538
     - rid: 5402918916675862546
     - rid: 5402919007924256841
+    - rid: 5402919343912124501
   m_SharedBlackboardVariableGuids: []
   references:
     version: 2
@@ -58,6 +59,14 @@ MonoBehaviour:
           m_Value1: 756160618016444281
         Name: HamsterAnimator
         m_Value: {fileID: 0}
+    - rid: 5402919343912124501
+      type: {class: 'BlackboardVariable`1[[HamsterMoving, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 15159297785192950902
+          m_Value1: 12702652646183057470
+        Name: HamsterMoving
+        m_Value: {fileID: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,7 +89,9 @@ MonoBehaviour:
   - rid: 5402918918623592561
   - rid: 5402919008617365577
   - rid: 5402919008617365621
-  m_VersionTimestamp: 639222490089826139
+  - rid: 5402919343912124528
+  - rid: 5402919343912124593
+  m_VersionTimestamp: 639232564592113059
   m_SerializedVersion: 3
   m_DebugInfo: {fileID: 1229485847307978368}
   m_RuntimeGraph: {fileID: 6580756489491621071}
@@ -154,6 +165,31 @@ MonoBehaviour:
       Type:
         m_SerializableType: HamsterAnimatorController+HamsterAnimState, Assembly-CSharp,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      Tooltip: 
+    NamedChildren: []
+    IsPlaceholder: 0
+  - Name: Set Hamster Moving
+    Story: '[Self] sets moving [IsMovingEnabled]'
+    RuntimeTypeString: SetHamsterMovingAction, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+    RuntimeTypeID:
+      m_Value0: 381705302609351351
+      m_Value1: 5853343193104129704
+    Variables:
+    - Name: Self
+      Type:
+        m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+      Tooltip: 
+    - Name: HamsterMoving
+      Type:
+        m_SerializableType: HamsterMoving, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+      Tooltip: 
+    - Name: IsMovingEnabled
+      Type:
+        m_SerializableType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+          PublicKeyToken=b77a5c561934e089
       Tooltip: 
     NamedChildren: []
     IsPlaceholder: 0
@@ -283,9 +319,11 @@ MonoBehaviour:
         - rid: 5402918916675862588
         Nodes:
         - rid: 5402919008617365577
+        - rid: 5402919343912124528
         - rid: 5402918918623592561
-        - rid: 5402918916675862670
+        - rid: 5402919343912124593
         - rid: 5402919008617365621
+        - rid: 5402918916675862670
         - rid: 5402918916675862578
     - rid: 5402918916675862587
       type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
@@ -309,7 +347,7 @@ MonoBehaviour:
     - rid: 5402918916675862670
       type: {class: ActionNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
       data:
-        Position: {x: -122.79188, y: 98.696884}
+        Position: {x: -114.791885, y: 198.69699}
         ID:
           m_Value0: 7206448591907753039
           m_Value1: 860577859165171968
@@ -654,6 +692,220 @@ MonoBehaviour:
           m_Value1: 0
         Name: 
         m_Value: 2
+    - rid: 5402919343912124528
+      type: {class: ActionNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        Position: {x: 112.039925, y: 162.48962}
+        ID:
+          m_Value0: 12190029381482472252
+          m_Value1: 18392091494904771028
+        Parents:
+        - rid: 5402918916675862586
+        PortModels:
+        - rid: 5402919343912124529
+        - rid: 5402919343912124530
+        NodeType:
+          m_SerializableType: SetHamsterMovingAction, Assembly-CSharp, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+        NodeTypeID:
+          m_Value0: 381705302609351351
+          m_Value1: 5853343193104129704
+        m_FieldValues:
+        - rid: 5402919343912124531
+        - rid: 5402919343912124532
+        - rid: 5402919343912124533
+    - rid: 5402919343912124529
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 5402919343912124528
+        m_Connections: []
+    - rid: 5402919343912124530
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: OutputPort
+        m_PortDataFlowType: 1
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 5402919343912124528
+        m_Connections: []
+    - rid: 5402919343912124531
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: Self
+        Type:
+          m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+        LocalValue:
+          rid: 5402919343912124534
+        LinkedVariable:
+          rid: 5402919343912124535
+    - rid: 5402919343912124532
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: HamsterMoving
+        Type:
+          m_SerializableType: HamsterMoving, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        LocalValue:
+          rid: 5402919343912124536
+        LinkedVariable:
+          rid: 5402919343912124555
+    - rid: 5402919343912124533
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: IsMovingEnabled
+        Type:
+          m_SerializableType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        LocalValue:
+          rid: 5402919343912124537
+        LinkedVariable:
+          rid: -2
+    - rid: 5402919343912124534
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: {fileID: 0}
+    - rid: 5402919343912124535
+      type: {class: 'TypedVariableModel`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
+    - rid: 5402919343912124536
+      type: {class: 'BlackboardVariable`1[[HamsterMoving, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: {fileID: 0}
+    - rid: 5402919343912124537
+      type: {class: 'BlackboardVariable`1[[System.Boolean, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: 1
+    - rid: 5402919343912124555
+      type: {class: 'TypedVariableModel`1[[HamsterMoving, Assembly-CSharp]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 15159297785192950902
+          m_Value1: 12702652646183057470
+        Name: HamsterMoving
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
+    - rid: 5402919343912124593
+      type: {class: ActionNodeModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        Position: {x: 112.03993, y: 266.48972}
+        ID:
+          m_Value0: 7238058192676527084
+          m_Value1: 9720433251691653936
+        Parents:
+        - rid: 5402918916675862586
+        PortModels:
+        - rid: 5402919343912124594
+        - rid: 5402919343912124595
+        NodeType:
+          m_SerializableType: SetHamsterMovingAction, Assembly-CSharp, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+        NodeTypeID:
+          m_Value0: 381705302609351351
+          m_Value1: 5853343193104129704
+        m_FieldValues:
+        - rid: 5402919343912124596
+        - rid: 5402919343912124597
+        - rid: 5402919343912124598
+    - rid: 5402919343912124594
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: InputPort
+        m_PortDataFlowType: 0
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 5402919343912124593
+        m_Connections: []
+    - rid: 5402919343912124595
+      type: {class: PortModel, ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        m_Name: OutputPort
+        m_PortDataFlowType: 1
+        m_IsFloating: 0
+        m_NodeModel:
+          rid: 5402919343912124593
+        m_Connections: []
+    - rid: 5402919343912124596
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: Self
+        Type:
+          m_SerializableType: UnityEngine.GameObject, UnityEngine.CoreModule, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+        LocalValue:
+          rid: 5402919343912124599
+        LinkedVariable:
+          rid: 5402919343912124535
+    - rid: 5402919343912124597
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: HamsterMoving
+        Type:
+          m_SerializableType: HamsterMoving, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        LocalValue:
+          rid: 5402919343912124600
+        LinkedVariable:
+          rid: 5402919343912124555
+    - rid: 5402919343912124598
+      type: {class: BehaviorGraphNodeModel/FieldModel, ns: Unity.Behavior, asm: Unity.Behavior.Authoring}
+      data:
+        FieldName: IsMovingEnabled
+        Type:
+          m_SerializableType: System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        LocalValue:
+          rid: 5402919343912124601
+        LinkedVariable:
+          rid: -2
+    - rid: 5402919343912124599
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: {fileID: 0}
+    - rid: 5402919343912124600
+      type: {class: 'BlackboardVariable`1[[HamsterMoving, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: {fileID: 0}
+    - rid: 5402919343912124601
+      type: {class: 'BlackboardVariable`1[[System.Boolean, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: 0
 --- !u!114 &1229485847307978368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -687,7 +939,8 @@ MonoBehaviour:
   - rid: 5402918916675862537
   - rid: 5402918916675862545
   - rid: 5402919007924256840
-  m_VersionTimestamp: 639219752684799842
+  - rid: 5402919343912124500
+  m_VersionTimestamp: 639232558430820431
   m_CommandBuffer:
     m_Commands: []
   m_RuntimeBlackboardAsset: {fileID: -6237258386238711909}
@@ -734,6 +987,16 @@ MonoBehaviour:
         IsExposed: 1
         m_IsShared: 0
         m_Value: {fileID: 0}
+    - rid: 5402919343912124500
+      type: {class: 'TypedVariableModel`1[[HamsterMoving, Assembly-CSharp]]', ns: Unity.Behavior.GraphFramework, asm: Unity.Behavior.GraphFramework}
+      data:
+        ID:
+          m_Value0: 15159297785192950902
+          m_Value1: 12702652646183057470
+        Name: HamsterMoving
+        IsExposed: 1
+        m_IsShared: 0
+        m_Value: {fileID: 0}
 --- !u!114 &6580756489491621071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -766,8 +1029,8 @@ MonoBehaviour:
           rid: 5402918916675862533
         BlackboardGroupReferences: []
         Root:
-          rid: 5402919008617365642
-        m_VersionTimestamp: 639222490089826139
+          rid: 5402919343912124643
+        m_VersionTimestamp: 639232564592113059
     - rid: 5402918916675862533
       type: {class: BlackboardReference, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
@@ -778,11 +1041,12 @@ MonoBehaviour:
       type: {class: Blackboard, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         m_Variables:
-        - rid: 5402919007924256853
-        - rid: 5402919007924256854
-        - rid: 5402919007924256855
-        - rid: 5402919007924256856
-    - rid: 5402919007924256853
+        - rid: 5402919343912124558
+        - rid: 5402919343912124559
+        - rid: 5402919343912124560
+        - rid: 5402919343912124561
+        - rid: 5402919343912124562
+    - rid: 5402919343912124558
       type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:
@@ -790,7 +1054,7 @@ MonoBehaviour:
           m_Value1: 0
         Name: Self
         m_Value: {fileID: 0}
-    - rid: 5402919007924256854
+    - rid: 5402919343912124559
       type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:
@@ -798,7 +1062,7 @@ MonoBehaviour:
           m_Value1: 5443018331208194990
         Name: IdleDuration
         m_Value: 0
-    - rid: 5402919007924256855
+    - rid: 5402919343912124560
       type: {class: 'BlackboardVariable`1[[System.Single, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:
@@ -806,7 +1070,7 @@ MonoBehaviour:
           m_Value1: 6784276635939550675
         Name: FarmDuration
         m_Value: 0
-    - rid: 5402919007924256856
+    - rid: 5402919343912124561
       type: {class: 'BlackboardVariable`1[[HamsterAnimatorController, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:
@@ -814,15 +1078,15 @@ MonoBehaviour:
           m_Value1: 756160618016444281
         Name: HamsterAnimator
         m_Value: {fileID: 0}
-    - rid: 5402919008617365614
-      type: {class: 'BlackboardVariable`1[[HamsterAnimatorController/HamsterAnimState, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+    - rid: 5402919343912124562
+      type: {class: 'BlackboardVariable`1[[HamsterMoving, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:
-          m_Value0: 0
-          m_Value1: 0
-        Name: 
-        m_Value: 1
-    - rid: 5402919008617365642
+          m_Value0: 15159297785192950902
+          m_Value1: 12702652646183057470
+        Name: HamsterMoving
+        m_Value: {fileID: 0}
+    - rid: 5402919343912124643
       type: {class: Start, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         ID:
@@ -833,10 +1097,10 @@ MonoBehaviour:
         m_Parent:
           rid: -2
         m_Child:
-          rid: 5402919008617365643
+          rid: 5402919343912124644
         Repeat: 1
         AllowMultipleRepeatsPerTick: 0
-    - rid: 5402919008617365643
+    - rid: 5402919343912124644
       type: {class: SequenceComposite, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         ID:
@@ -845,15 +1109,17 @@ MonoBehaviour:
         Graph:
           rid: 5402918916675862532
         m_Parent:
-          rid: 5402919008617365642
+          rid: 5402919343912124643
         m_Children:
-        - rid: 5402919008617365644
-        - rid: 5402919008617365645
-        - rid: 5402919008617365646
-        - rid: 5402919008617365647
-        - rid: 5402919008617365648
+        - rid: 5402919343912124645
+        - rid: 5402919343912124646
+        - rid: 5402919343912124647
+        - rid: 5402919343912124648
+        - rid: 5402919343912124649
+        - rid: 5402919343912124650
+        - rid: 5402919343912124651
         m_RegisteredObservers: []
-    - rid: 5402919008617365644
+    - rid: 5402919343912124645
       type: {class: SetHamsterAnimStateAction, ns: , asm: Assembly-CSharp}
       data:
         ID:
@@ -862,14 +1128,30 @@ MonoBehaviour:
         Graph:
           rid: 5402918916675862532
         m_Parent:
-          rid: 5402919008617365643
+          rid: 5402919343912124644
         Self:
-          rid: 5402919007924256853
+          rid: 5402919343912124558
         HamsterAnimator:
-          rid: 5402919007924256856
+          rid: 5402919343912124561
         State:
-          rid: 5402919008617365614
-    - rid: 5402919008617365645
+          rid: 5402919343912124652
+    - rid: 5402919343912124646
+      type: {class: SetHamsterMovingAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 12190029381482472252
+          m_Value1: 18392091494904771028
+        Graph:
+          rid: 5402918916675862532
+        m_Parent:
+          rid: 5402919343912124644
+        Self:
+          rid: 5402919343912124558
+        HamsterMoving:
+          rid: 5402919343912124562
+        IsMovingEnabled:
+          rid: 5402919343912124653
+    - rid: 5402919343912124647
       type: {class: WaitAction, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         ID:
@@ -878,22 +1160,26 @@ MonoBehaviour:
         Graph:
           rid: 5402918916675862532
         m_Parent:
-          rid: 5402919008617365643
+          rid: 5402919343912124644
         SecondsToWait:
-          rid: 5402919007924256854
-    - rid: 5402919008617365646
-      type: {class: CollectSeedAction, ns: , asm: Assembly-CSharp}
+          rid: 5402919343912124559
+    - rid: 5402919343912124648
+      type: {class: SetHamsterMovingAction, ns: , asm: Assembly-CSharp}
       data:
         ID:
-          m_Value0: 7206448591907753039
-          m_Value1: 860577859165171968
+          m_Value0: 7238058192676527084
+          m_Value1: 9720433251691653936
         Graph:
           rid: 5402918916675862532
         m_Parent:
-          rid: 5402919008617365643
+          rid: 5402919343912124644
         Self:
-          rid: 5402919007924256853
-    - rid: 5402919008617365647
+          rid: 5402919343912124558
+        HamsterMoving:
+          rid: 5402919343912124562
+        IsMovingEnabled:
+          rid: 5402919343912124654
+    - rid: 5402919343912124649
       type: {class: SetHamsterAnimStateAction, ns: , asm: Assembly-CSharp}
       data:
         ID:
@@ -902,14 +1188,26 @@ MonoBehaviour:
         Graph:
           rid: 5402918916675862532
         m_Parent:
-          rid: 5402919008617365643
+          rid: 5402919343912124644
         Self:
-          rid: 5402919007924256853
+          rid: 5402919343912124558
         HamsterAnimator:
-          rid: 5402919007924256856
+          rid: 5402919343912124561
         State:
-          rid: 5402919008617365649
-    - rid: 5402919008617365648
+          rid: 5402919343912124655
+    - rid: 5402919343912124650
+      type: {class: CollectSeedAction, ns: , asm: Assembly-CSharp}
+      data:
+        ID:
+          m_Value0: 7206448591907753039
+          m_Value1: 860577859165171968
+        Graph:
+          rid: 5402918916675862532
+        m_Parent:
+          rid: 5402919343912124644
+        Self:
+          rid: 5402919343912124558
+    - rid: 5402919343912124651
       type: {class: WaitAction, ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         ID:
@@ -918,10 +1216,34 @@ MonoBehaviour:
         Graph:
           rid: 5402918916675862532
         m_Parent:
-          rid: 5402919008617365643
+          rid: 5402919343912124644
         SecondsToWait:
-          rid: 5402919007924256855
-    - rid: 5402919008617365649
+          rid: 5402919343912124560
+    - rid: 5402919343912124652
+      type: {class: 'BlackboardVariable`1[[HamsterAnimatorController/HamsterAnimState, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: 1
+    - rid: 5402919343912124653
+      type: {class: 'BlackboardVariable`1[[System.Boolean, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: 1
+    - rid: 5402919343912124654
+      type: {class: 'BlackboardVariable`1[[System.Boolean, mscorlib]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 0
+          m_Value1: 0
+        Name: 
+        m_Value: 0
+    - rid: 5402919343912124655
       type: {class: 'BlackboardVariable`1[[HamsterAnimatorController/HamsterAnimState, Assembly-CSharp]]', ns: Unity.Behavior, asm: Unity.Behavior}
       data:
         GUID:

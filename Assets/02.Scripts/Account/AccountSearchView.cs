@@ -6,25 +6,25 @@ public class AccountSearchView : UIBase
 {
     [SerializeField] private TMP_InputField InputField_Id;
     [SerializeField] private UIButton Button_Search;
+    [SerializeField] private UIButton Button_Close;
 
     private AccountSearchViewModel _vm;
 
-
-    // 임시 테스트용 초기화
     private void Start()
     {
-        AccountSearchService testService = new AccountSearchService();
-        AccountSearchViewModel testVm = new AccountSearchViewModel();
+        AccountSearchService service = ServiceManager.Instance.AccountSearchService;
 
-        testVm.SetSearchService(testService);
-
-        BindViewModel(testVm);
+        if (service != null)
+        {
+            BindViewModel(service.GetViewModel());
+        }
     }
 
     private void OnEnable()
     {
         Button_Search.BindOnClickButtonEvent(OnClickSearch);
         InputField_Id.onValueChanged.AddListener(OnChangeId);
+        Button_Close.BindOnClickButtonEvent(OnClickClose);
     }
 
     private void OnDisable()
@@ -42,6 +42,10 @@ public class AccountSearchView : UIBase
         }
     }
 
+    private void OnPropChanged_View(object sender, PropertyChangedEventArgs e)
+    {
+    }
+
     public void BindViewModel(AccountSearchViewModel vm)
     {
         _vm = vm;
@@ -51,8 +55,9 @@ public class AccountSearchView : UIBase
         _vm.OnFailSearch += OnFailSearch_View;
     }
 
-    private void OnPropChanged_View(object sender, PropertyChangedEventArgs e)
+    private void OnClickClose()
     {
+        UIManager.Instance.CloseUI(UIRootType.PopupUI, UIType.AccountSearchUI);
     }
 
     private void OnChangeId(string text)
@@ -75,7 +80,7 @@ public class AccountSearchView : UIBase
     {
         UIManager.Instance.OpenUI(UIRootType.PopupUI, UIType.AccountInfoUI);
     }
-
+        
     private void OnFailSearch_View()
     {
         UIManager.Instance.OpenUI(UIRootType.PopupUI, UIType.SearchFailUI);

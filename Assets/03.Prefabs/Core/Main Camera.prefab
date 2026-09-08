@@ -152,6 +152,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   Camera_Main: {fileID: 8383616873101771492}
+  _priorityLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
   Position_Overview: {x: 3, y: 4, z: -10}
   Rotation_Overview: {x: 0, y: 0, z: 0}
   Size_Ortho: 15
@@ -161,11 +164,11 @@ MonoBehaviour:
   Zoom_Angle: {x: 30, y: 0, z: 0}
   Zoom_Distance: 10
   Zoom_FOV: 40
-  Zoom_Sensitive: 0.01
+  Zoom_Sensitive: 0.05
   Size_MinOrtho: 4
   Size_MaxOrtho: 20
-  FOV_Min: 30
-  FOV_Max: 75
+  FOV_Min: 15
+  FOV_Max: 45
   Duration: 0.8
   Bound_Min: {x: -19, y: -21}
   Bound_Max: {x: 21, y: 5}

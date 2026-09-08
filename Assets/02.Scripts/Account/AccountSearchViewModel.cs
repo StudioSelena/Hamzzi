@@ -2,8 +2,8 @@
 
 public class AccountSearchViewModel : ViewModelBase
 {
-    private AccountSearchService _searchService;
-    
+    private AccountSearchService _service;
+
     public event Action OnCompleteSearch;
     public event Action OnFailSearch;
 
@@ -24,25 +24,42 @@ public class AccountSearchViewModel : ViewModelBase
         }
     }
 
-    public void SetSearchService(AccountSearchService service)
+    private long _targetUserUid = 0;
+    public long TargetUserUid
     {
-        _searchService = service;
+        get
+        {
+            return _targetUserUid;
+        }
+        set
+        {
+            if (_targetUserUid != value)
+            {
+                _targetUserUid = value;
+                OnPropertyChanged(nameof(TargetUserUid));
+            }
+        }
+    }
+
+    public void SetService(AccountSearchService service)
+    {
+        _service = service;
     }
 
     public async void RequestSearch()
     {
-        if (_searchService != null)
-        {
-            bool isSuccess = await _searchService.TrySearchAccountAsync(_inputId);
+        if (_service == null) return;
 
-            if (isSuccess == true)
-            {
-                InvokeCompleteSearch();
-            }
-            else
-            {
-                InvokeFailSearch();
-            }
+        long resultUid = await _service.TrySearchAccountAsync(_inputId);
+
+        if (resultUid != 0)
+        {
+            TargetUserUid = resultUid;
+            InvokeCompleteSearch();
+        }
+        else
+        {
+            InvokeFailSearch();
         }
     }
 

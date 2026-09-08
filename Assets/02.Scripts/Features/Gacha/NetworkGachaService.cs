@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class NetworkGachaService
 {
-    private static int InstanceID = 0;
-
     private GachaViewModel _gachaViewModel;
 
     public GachaViewModel GetGachaViewModel()
@@ -24,8 +22,8 @@ public class NetworkGachaService
     private void SetGachaViewModel(GachaViewModel vm)
     {
         // 뷰모데 초기화
-        CollectionViewModel collectionVM = ServiceManager.Instance.CollectionService.GetCollectionViewModel();
-        List<string> allHamsterList = collectionVM.AllHamsterIdList;
+        HamsterViewModel hamsterViewModel = ServiceManager.Instance.CollectionService.GetHamsterViewModel();
+        List<string> allHamsterList = hamsterViewModel.AllHamsterIdList;
 
         foreach(string hamsterId in allHamsterList)
         {
@@ -59,7 +57,7 @@ public class NetworkGachaService
         string drawHamsterId = hamsterList[randomIndex];
 
         // 햄스터 얼굴 랜덤 뽑기
-        var faceList = ServiceManager.Instance.CollectionService.GetCollectionViewModel().AllFaceIdList;
+        var faceList = ServiceManager.Instance.CollectionService.GetHamsterViewModel().AllFaceIdList;
         int faceCount = faceList.Count;
         randomIndex = Random.Range(0, faceCount);
         string drawFaceId = faceList[randomIndex];

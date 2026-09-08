@@ -87,6 +87,7 @@ public class BuildUI : ViewBase
     private void EnterAisleMode()
     {
         Text_Info.text = "건설한 굴과 연결할 다른 굴을 터치해주세요!";
+
         Button_Destroy.gameObject.SetActive(false);
         Button_Connect.gameObject.SetActive(false);
     }

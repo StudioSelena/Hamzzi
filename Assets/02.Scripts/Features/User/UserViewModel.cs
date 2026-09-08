@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using System;
+using UnityEngine;
 
 public class UserViewModel : ViewModelBase
 {
@@ -50,6 +52,22 @@ public class UserViewModel : ViewModelBase
             }
         }
     }
+
+    public float GoldPerSec { get; set; }
+
+    private DateTime _lastCrossTime;
+    public DateTime LastCrossTime
+    {
+        get { return _lastCrossTime; }
+        set
+        {
+            if (_lastCrossTime != value)
+            {
+                _lastCrossTime = value;
+                OnPropertyChanged(nameof(LastCrossTime));
+            }
+        }
+    }
 }
 
 public static class UserViewModelExtension
@@ -66,8 +84,6 @@ public static class UserViewModelExtension
 
         int bonusAmount = Mathf.FloorToInt(_seedBonusRemain);
 
-        Debug.Log($"[버프 계산] " + $"이번 보너스: {addedBonus}, " + $"누적 보너스: {_seedBonusRemain}, " + $"지급 가능한 보너스: {bonusAmount}");
-
         if(bonusAmount > 0)
         {
             userVm.SeedCount += bonusAmount;
@@ -77,9 +93,28 @@ public static class UserViewModelExtension
         }
     }
 
-    public static void AddSeedBuff(this UserViewModel userVm, float amount)
+    //방치보상 계산 전용 - 버프 중복 적용 막기 위해
+    public static void AddSeedWithoutBuff(this UserViewModel userVm, int amount)
     {
-        _seedBuffRate += amount;
+        userVm.SeedCount += amount;
+    }
+
+    public static void SetFurnitureBuff(this UserViewModel userVm, float amount)
+    {
+        _seedBuffRate = amount;
+    }
+
+    public static float GetSeedBuffRate(this UserViewModel userVm)
+    {
+        return _seedBuffRate;
+    }
+
+    public static int PredictSeedGain(this UserViewModel userVm, int amount)
+    {
+        float addedBonus = amount * _seedBuffRate;
+        int bonusAmount = Mathf.FloorToInt(_seedBonusRemain + addedBonus);
+
+        return amount + bonusAmount;
     }
 
     public static bool TryUseSeed(this UserViewModel userVm, int amount)
@@ -92,5 +127,13 @@ public static class UserViewModelExtension
         userVm.SeedCount -= amount;
 
         return true;
+    }
+
+    public static void SetLastCrossTime(this UserViewModel userVm, DateTime lastCrossTime)
+    {
+        userVm.LastCrossTime = lastCrossTime;
+
+        long userUID = ServiceManager.Instance.LoginService.GetViewModel().UserUID;
+        ServiceManager.Instance.UserService.SaveUserAsync(userUID).Forget();
     }
 }

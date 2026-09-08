@@ -2,6 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.IO;
+
+[Serializable]
+public class AutoLoginData
+{
+    public bool IsAutoLogin = false;
+    public string UserId = "";
+    public string UserPassword = "";
+}
 
 public class GameDataManager : SingletonBase<GameDataManager>
 {
@@ -98,5 +107,25 @@ public class GameDataManager : SingletonBase<GameDataManager>
             return dict.Values.ToList();
         }
         return null;
+    }
+
+    public void SaveLocalData<T>(T data, string fileName)
+    {
+        string path = Path.Combine(Application.persistentDataPath, fileName + ".json");
+        string json = JsonUtility.ToJson(data, true);
+        File.WriteAllText(path, json);
+    }
+
+    public T LoadLocalData<T>(string fileName) where T : new()
+    {
+        string path = Path.Combine(Application.persistentDataPath, fileName + ".json");
+
+        if (File.Exists(path) == true)
+        {
+            string json = File.ReadAllText(path);
+            return JsonUtility.FromJson<T>(json);
+        }
+
+        return new T();
     }
 }

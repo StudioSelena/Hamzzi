@@ -7,6 +7,9 @@ public class LoginService
 {
     private LoginViewModel _viewModel;
 
+    private string defaultIconAddress = "Hamster/HasterIcon/Hamster_00_Icon";
+    private string defaultName = "기본이름";
+
     public LoginService()
     {
         _viewModel = new LoginViewModel();
@@ -99,14 +102,16 @@ public class LoginService
 
                             if (accountRows > 0)
                             {
-                                string insertGameDataQuery = $"INSERT INTO {DBConfig.UserGameTable} (User_UID, User_Name, User_Icon_Data_ID, Gold_Count) VALUES (@uid, @userName, @iconId, @gold);";
+                                string insertGameDataQuery = $"INSERT INTO {DBConfig.UserGameTable} (User_UID, User_Name, User_Icon_Data_ID, Gold_Count, Gold_Per_Sec, Gold_Bonus) VALUES (@uid, @userName, @iconId, @gold, @goldPerSec, @goldBonus);";
 
                                 using (MySqlCommand insertGameDataCmd = new MySqlCommand(insertGameDataQuery, conn))
                                 {
                                     insertGameDataCmd.Parameters.AddWithValue("@uid", generatedUid);
-                                    insertGameDataCmd.Parameters.AddWithValue("@userName", "기본이름");
-                                    insertGameDataCmd.Parameters.AddWithValue("@iconId", "default_icon");
+                                    insertGameDataCmd.Parameters.AddWithValue("@userName", defaultName);
+                                    insertGameDataCmd.Parameters.AddWithValue("@iconId", defaultIconAddress);
                                     insertGameDataCmd.Parameters.AddWithValue("@gold", 0);
+                                    insertGameDataCmd.Parameters.AddWithValue("@goldPerSec", 0);
+                                    insertGameDataCmd.Parameters.AddWithValue("@goldBonus", 0);
 
                                     int gameDataRows = await insertGameDataCmd.ExecuteNonQueryAsync();
 

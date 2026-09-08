@@ -22,10 +22,14 @@ public partial class CollectSeedAction : Action
 
     protected override Status OnUpdate()
     {
-        var userVm = ServiceManager.Instance.UserService.GetUserViewModel();
-        if(userVm != null)
+        if (HamsterManager.Instance.IsCurrentCollectionMine() == true)
         {
-            userVm.AddSeed(SeedPerCollect);
+            var userVm = ServiceManager.Instance.UserService.GetUserViewModel();
+            if (userVm != null)
+            {
+                userVm.AddSeed(SeedPerCollect);
+                HamsterManager.Instance.AddCollectCount();
+            }
         }
 
         Vector3 spawnSpot = Self.Value.transform.position + new Vector3(0f, SeedPopSpawnHeightOffset, 0f);

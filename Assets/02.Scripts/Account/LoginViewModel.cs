@@ -8,7 +8,8 @@ public class LoginViewModel : ViewModelBase
     public event Action OnFailLogin;
     public event Action OnCompleteCreateAccount;
     public event Action OnFailCreateAccount; 
-    public event Action OnCompleteUpdateLastLogin;
+    public event Action OnCompleteUpdateLastLogin; 
+    public event Action OnCompleteLogout;
 
     private string _inputId = "";
     public string InputId
@@ -40,6 +41,20 @@ public class LoginViewModel : ViewModelBase
             {
                 _inputPassword = value;
                 OnPropertyChanged(nameof(InputPassword));
+            }
+        }
+    }
+
+    private bool _isAutoLogin = false;
+    public bool IsAutoLogin
+    {
+        get { return _isAutoLogin; }
+        set
+        {
+            if (_isAutoLogin != value)
+            {
+                _isAutoLogin = value;
+                OnPropertyChanged(nameof(IsAutoLogin));
             }
         }
     }
@@ -117,6 +132,27 @@ public class LoginViewModel : ViewModelBase
         _loginService = service;
     }
 
+    public void CheckAutoLogin()
+    {
+        AutoLoginData savedData = GameDataManager.Instance.LoadLocalData<AutoLoginData>("AutoLoginSettings");
+
+        if (savedData != null)
+        {
+            IsAutoLogin = savedData.IsAutoLogin;
+
+            if (IsAutoLogin == true)
+            {
+                InputId = savedData.UserId;
+                InputPassword = savedData.UserPassword;
+
+                if (InputId != "" && InputPassword != "")
+                {
+                    RequestLogin();
+                }
+            }
+        }
+    }
+
     public async void RequestLogin()
     {
         if (_loginService != null)
@@ -126,10 +162,9 @@ public class LoginViewModel : ViewModelBase
             if (resultUid != 0)
             {
                 UserUID = resultUid;
+                SaveAutoLoginData();
                 LoggedUserId = _inputId;
                 LastLoginTime = await _loginService.GetLastLoginTimeAsync(UserUID);
-
-                await ServiceManager.Instance.UserService.InitUser(UserUID);
 
                 FeedbackMessage = "로그인 성공!";
                 InvokeCompleteLogin();
@@ -142,6 +177,25 @@ public class LoginViewModel : ViewModelBase
         }
     }
 
+    private void SaveAutoLoginData()
+    {
+        AutoLoginData data = new AutoLoginData();
+        data.IsAutoLogin = _isAutoLogin;
+
+        if (_isAutoLogin == true)
+        {
+            data.UserId = _inputId;
+            data.UserPassword = _inputPassword;
+        }
+        else
+        {
+            data.UserId = "";
+            data.UserPassword = "";
+        }
+
+        GameDataManager.Instance.SaveLocalData(data, "AutoLoginSettings");
+    }
+
     public async void RequestCreateAccount()
     {
         if (_loginService != null)
@@ -152,6 +206,7 @@ public class LoginViewModel : ViewModelBase
             {
                 UserUID = resultUid;
                 LoggedUserId = _inputId;
+                LastLoginTime = DateTime.UtcNow;
 
                 FeedbackMessage = "계정 생성 성공!";
                 InvokeCompleteCreateAccount();
@@ -177,8 +232,22 @@ public class LoginViewModel : ViewModelBase
             InvokeCompleteUpdateLastLogin();
         }
     }
+    public void RequestLogout()
+    {
+        IsAutoLogin = false;
+        InputId = "";
+        InputPassword = "";
 
-    private void InvokeCompleteLogin()
+        SaveAutoLoginData();
+
+        UserUID = 0;
+        LoggedUserId = "";
+        LastLoginTime = DateTime.MinValue;
+
+        InvokeCompleteLogout();
+    }
+
+    public void InvokeCompleteLogin()
     {
         if (OnCompleteLogin != null)
         {
@@ -215,6 +284,13 @@ public class LoginViewModel : ViewModelBase
         if(OnCompleteUpdateLastLogin != null)
         {
             OnCompleteUpdateLastLogin.Invoke();
+        }
+    }
+    private void InvokeCompleteLogout()
+    {
+        if (OnCompleteLogout != null)
+        {
+            OnCompleteLogout.Invoke();
         }
     }
 }

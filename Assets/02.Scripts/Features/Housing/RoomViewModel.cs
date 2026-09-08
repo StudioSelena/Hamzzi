@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public enum BuildType
@@ -45,7 +44,7 @@ public class RoomViewModel : ViewModelBase
         }
     }
 
-    private int _gridFactor = 2;
+    private int _gridFactor = 4;
     public int GridFactor
     {
         get
@@ -124,9 +123,9 @@ public class RoomViewModel : ViewModelBase
         }
     }
 
-    public RoomViewModel(BuildType type, Vector2Int pos)
+    public RoomViewModel(string instanceID, BuildType type, Vector2Int pos)
     {
-        InstanceID = Guid.NewGuid().ToString();
+        InstanceID = instanceID;
         BuildType = type;
         OriginPos = pos;
         Size = (type == BuildType.Room) ? new Vector2Int(ROOM_WIDTH, ROOM_HEIGHT) : new Vector2Int(AISLE_SIZE, AISLE_SIZE);

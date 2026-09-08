@@ -7,11 +7,12 @@ public class FriendListView : UIBase
     [SerializeField] private Transform Transform_Content;
     [SerializeField] private GameObject Prefab_FriendSlot;
     [SerializeField] private UIButton Button_Close;
+    [SerializeField] private UIButton Button_Search;
 
     private FriendListViewModel _vm;
     private List<GameObject> _spawnedSlots = new List<GameObject>();
 
-    private void Start()
+    private void Awake()
     {
         FriendListService service = ServiceManager.Instance.FriendListService;
 
@@ -21,17 +22,10 @@ public class FriendListView : UIBase
         }
     }
 
-    public void BindViewModel(FriendListViewModel vm)
-    {
-        _vm = vm;
-
-        _vm.PropertyChanged += OnPropChanged_View;
-        _vm.OnCompleteLoadFriendList += OnCompleteLoadFriendList_View;
-    }
-
     private void OnEnable()
     {
         Button_Close.BindOnClickButtonEvent(OnClickClose);
+        Button_Search.BindOnClickButtonEvent(OnClickSearch);
 
         if (_vm != null)
         {
@@ -57,9 +51,22 @@ public class FriendListView : UIBase
     {
     }
 
+    public void BindViewModel(FriendListViewModel vm)
+    {
+        _vm = vm;
+
+        _vm.PropertyChanged += OnPropChanged_View;
+        _vm.OnCompleteLoadFriendList += OnCompleteLoadFriendList_View;
+    }
+
     private void OnClickClose()
     {
         UIManager.Instance.CloseUI(UIRootType.PopupUI, UIType.FriendListUI);
+    }
+
+    private void OnClickSearch()
+    {
+        UIManager.Instance.OpenUI(UIRootType.PopupUI, UIType.AccountSearchUI);
     }
 
     private void OnCompleteLoadFriendList_View()

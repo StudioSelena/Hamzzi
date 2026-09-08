@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class LoginView : UIBase
@@ -10,18 +11,23 @@ public class LoginView : UIBase
     [SerializeField] private UIButton Button_Login;
     [SerializeField] private UIButton Button_CreateAccount;
     [SerializeField] private UIButton Button_BackgroundClose;
-
     [SerializeField] private TextMeshProUGUI TextMesh_Feedback;
+    [SerializeField] private Toggle Toggle_AutoLogin;
 
     private LoginViewModel _vm;
 
-    private void Start()
+    private void Awake()
     {
         LoginService service = ServiceManager.Instance.LoginService;
 
         if (service != null)
         {
             BindViewModel(service.GetViewModel());
+        }
+
+        if (_vm != null)
+        {
+            _vm.CheckAutoLogin();
         }
     }
 
@@ -34,6 +40,8 @@ public class LoginView : UIBase
 
         InputField_Id.onValueChanged.AddListener(OnChangeId);
         InputField_Password.onValueChanged.AddListener(OnChangePassword);
+
+        Toggle_AutoLogin.onValueChanged.AddListener(OnChangeAutoLoginToggle);
     }
 
     private void OnDisable()
@@ -45,6 +53,8 @@ public class LoginView : UIBase
 
         InputField_Id.onValueChanged.RemoveListener(OnChangeId);
         InputField_Password.onValueChanged.RemoveListener(OnChangePassword);
+
+        Toggle_AutoLogin.onValueChanged.RemoveListener(OnChangeAutoLoginToggle);
     }
 
     private void OnDestroy()
@@ -75,9 +85,23 @@ public class LoginView : UIBase
 
     private void OnPropChanged_View(object sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(LoginViewModel.FeedbackMessage))
+        switch (e.PropertyName)
         {
-            TextMesh_Feedback.text = _vm.FeedbackMessage;
+            case nameof(LoginViewModel.InputId):
+                InputField_Id.text = _vm.InputId;
+                break;
+
+            case nameof(LoginViewModel.InputPassword):
+                InputField_Password.text = _vm.InputPassword;
+                break;
+
+            case nameof(LoginViewModel.IsAutoLogin):
+                Toggle_AutoLogin.isOn = _vm.IsAutoLogin;
+                break;
+
+            case nameof(LoginViewModel.FeedbackMessage):
+                TextMesh_Feedback.text = _vm.FeedbackMessage;
+                break;
         }
     }
 
@@ -94,6 +118,13 @@ public class LoginView : UIBase
         if (_vm != null)
         {
             _vm.InputPassword = text;
+        }
+    }
+    private void OnChangeAutoLoginToggle(bool isOn)
+    {
+        if (_vm != null)
+        {
+            _vm.IsAutoLogin = isOn;
         }
     }
 
@@ -134,6 +165,8 @@ public class LoginView : UIBase
 
     private void OnCompleteCreateAccount_View()
     {
+        UIManager.Instance.CloseLoginUI();
+        UIManager.Instance.OpenSetNameUI();
         Debug.Log("계정 생성 완료");
     }
 

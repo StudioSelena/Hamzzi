@@ -8,6 +8,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/01.Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 0
+    path: Assets/01.Scenes/Hamzzi_JYC.unity
+    guid: 95050197d13c40447aa60e43014c80f3
+  - enabled: 1
+    path: Assets/01.Scenes/Housing.unity
+    guid: 8789a601078b2ff4088c0f7bddb5fec1
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: fe467e519c7e0f348a4bf6d0e164e932, type: 2}
     com.unity.dt.app-ui: {fileID: 11400000, guid: 99f9c9493070a9d4c979a8fec7c5a8d3, type: 2}

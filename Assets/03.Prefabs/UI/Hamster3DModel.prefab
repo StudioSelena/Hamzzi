@@ -1061,7 +1061,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3942856769663045957}
   - component: {fileID: 4029935126034233137}
-  - component: {fileID: 3703568940736830781}
   m_Layer: 0
   m_Name: Hamsto
   m_TagString: Untagged
@@ -1097,7 +1096,7 @@ Animator:
   m_GameObject: {fileID: 3944444647364059049}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 74b2d35640879da43afa61140171c32a, type: 3}
-  m_Controller: {fileID: 9100000, guid: 90e6b583b25afc64a8bc7c4757a24cf9, type: 2}
+  m_Controller: {fileID: 9100000, guid: ae915eb84a497c14790cbf743b61e71e, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -1109,20 +1108,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &3703568940736830781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3944444647364059049}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75a2fbccbd6706d4fac95334dfa43a4a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HamsterForm
-  FaceMesh: {fileID: 3989772259518028641}
-  BodyMesh: {fileID: 3989719665679832275}
 --- !u!1 &3944448659375806645
 GameObject:
   m_ObjectHideFlags: 0
@@ -2305,7 +2290,7 @@ GameObject:
   - component: {fileID: 4384240296703077595}
   - component: {fileID: 8526221811944421731}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2392,8 +2377,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 114434090791664824}
+  - component: {fileID: 9206011834768837253}
   m_Layer: 0
-  m_Name: Collection Hamster
+  m_Name: Hamster3DModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2412,11 +2398,28 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 3942856769663045957}
-  - {fileID: 2658031618592506578}
   - {fileID: 7071875057197180953}
+  - {fileID: 2658031618592506578}
+  - {fileID: 3942856769663045957}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9206011834768837253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7012912615587124373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46832cbd4bb3a314aa0dc068d343ebb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Hamster3DModelView
+  Camera: {fileID: 2336610347214708371}
+  _hamsterTransform: {fileID: 3942856769663045957}
+  _animator: {fileID: 4029935126034233137}
+  FaceMesh: {fileID: 3989772259518028641}
+  HamsterMesh: {fileID: 3989719665679832275}
 --- !u!1 &7087328157503703436
 GameObject:
   m_ObjectHideFlags: 0
@@ -2491,8 +2494,8 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: 98417eee6f001d14185a4d9c5ce3b0b4, type: 2}
-  m_TargetDisplay: 0
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 1
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1

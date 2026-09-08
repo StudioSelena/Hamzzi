@@ -6,29 +6,58 @@ using UnityEngine;
 
 public class NetworkCollectionService
 {
-    private CollectionViewModel _collectionViewModel;
+    private CollectionViewModel _currentCollectionViewModel;
+    private Dictionary<long, CollectionViewModel> _collectionViewModelList = new Dictionary<long, CollectionViewModel>();
+    private HamsterViewModel _hamsterViewModel;
 
-    public CollectionViewModel GetCollectionViewModel()
+    public event Action OnHamsterDataLoaded;
+    public event Action OnChangedCurrentCollectionViewModel;
+
+    public CollectionViewModel GetCurrentCollectionViewModel()
     {
-        if(_collectionViewModel == null)
+        if (_currentCollectionViewModel == null)
         {
-            var collectionViewModel = new CollectionViewModel();
-            SetCollectionViewModel(collectionViewModel);
-            _collectionViewModel = collectionViewModel;
+            return null;
         }
 
-        return _collectionViewModel;
+        return _currentCollectionViewModel;
     }
 
-    private void SetCollectionViewModel(CollectionViewModel vm)
+    public void SetCurrentCollectionViewModel(long userUID)
+    {
+        var collectionViewModel = GetCollectionViewModel(userUID);
+        _currentCollectionViewModel = collectionViewModel;
+
+        OnChangedCurrentCollectionViewModel?.Invoke();
+    }
+
+    public CollectionViewModel GetCollectionViewModel(long userUID)
+    {
+        if(_collectionViewModelList.ContainsKey(userUID) == false)
+        {
+            _collectionViewModelList.Add(userUID, new CollectionViewModel());
+        }
+
+        return _collectionViewModelList[userUID];
+    }
+
+    public HamsterViewModel GetHamsterViewModel()
+    {
+        if (_hamsterViewModel == null)
+        {
+            var hamsterViewModel = new HamsterViewModel();
+            SetHamsterViewModel(hamsterViewModel);
+            _hamsterViewModel = hamsterViewModel;
+        }
+
+        return _hamsterViewModel;
+    }
+
+    private void SetHamsterViewModel(HamsterViewModel vm)
     {
         GameDataManager.Instance.LoadData<HamsterData>();
         GameDataManager.Instance.LoadData<FaceData>();
-        LoadHamsterId(vm);
-    }
 
-    private void LoadHamsterId(CollectionViewModel vm)
-    {
         var allHamsterIds = GameDataManager.Instance.GetAllDataId<HamsterData>();
         vm.AllHamsterIdList = allHamsterIds;
 
@@ -36,10 +65,12 @@ public class NetworkCollectionService
         vm.AllFaceIdList = allFaceIds;
     }
 
-    public async UniTask<List<HamsterSave>> LoadHamsterCollectionData(long userUID)
+    public async UniTask LoadHamsterCollectionData(long userUID)
     {
-        List<HamsterSave> hamsterList = new List<HamsterSave>();
+        if (_collectionViewModelList.ContainsKey(userUID) == true)
+            return;
 
+        _collectionViewModelList.Add(userUID, new CollectionViewModel());
         using (MySqlConnection conn = new MySqlConnection(DBConfig.ConnectionString))
         {
             try
@@ -63,9 +94,7 @@ public class NetworkCollectionService
                                 FaceId = reader.GetString("Face_Data_ID")
                             };
 
-                            // 2. 리스트에 추가
-                            hamsterList.Add(hamster);
-                            _collectionViewModel.AddCollectedHamsterList(hamster, true);
+                            _collectionViewModelList[userUID].AddCollectedHamsterList(hamster, true);
 
                             Debug.Log($"Hamster Data Load : {hamster.HamsterId}, {hamster.FaceId}");
                         }
@@ -78,7 +107,7 @@ public class NetworkCollectionService
             }
         }
 
-        return hamsterList;
+        OnHamsterDataLoaded?.Invoke();
     }
 
     public async UniTask TrySaveHamsterData(HamsterSave hamsterSave)

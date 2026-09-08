@@ -24,6 +24,8 @@ public class FeverTimeManager : SingletonBase<FeverTimeManager>
     private HamsterData _currentHamsterData;
     private FeverTimeData _currentFeverTimeData;
 
+    private int _rewardSeedCount;
+
     private void Start()
     {
         GameDataManager.Instance.LoadData<FeverTimeData>();
@@ -129,18 +131,33 @@ public class FeverTimeManager : SingletonBase<FeverTimeManager>
 
     private void HandleResultState()
     {
-        int rewardAmount = _tapCount * _currentFeverTimeData.SeedPerTap;
-        //GameManager.Instance.AddSeedCount(rewardAmount);
-        var userVm = ServiceManager.Instance.UserService.GetUserViewModel();
-        if(userVm != null)
+        _rewardSeedCount = _tapCount * _currentFeverTimeData.SeedPerTap;
+        UIManager.Instance.OpenFeverTimeResultUI();
+
+#if UNITY_EDITOR
+        Debug.Log($"FeverTimeState: Result, 보상 {_rewardSeedCount} 지급 (연타 {_tapCount}회 x {_currentFeverTimeData.SeedPerTap})");
+#endif
+
+    }
+
+    public void ClaimReward()
+    {
+        if(_rewardSeedCount <= 0)
         {
-            userVm.AddSeed(rewardAmount);
+            return;
+        }
+
+        var userVm = ServiceManager.Instance.UserService.GetUserViewModel();
+        if (userVm != null)
+        {
+            userVm.AddSeed(_rewardSeedCount);
         }
 
 #if UNITY_EDITOR
-        Debug.Log($"FeverTimeState: Result, 보상 {rewardAmount} 지급 (연타 {_tapCount}회 x {_currentFeverTimeData.SeedPerTap})");
+        Debug.Log($"피버타임 보상 수령: +{_rewardSeedCount}");
 #endif
 
+        _rewardSeedCount = 0;
         SetState(FeverTimeState.Idle);
     }
 
@@ -164,4 +181,20 @@ public class FeverTimeManager : SingletonBase<FeverTimeManager>
         Debug.Log($"HamsterData: {hamsterData.Name} / {_currentFeverTimeData})");
 #endif
     }
+
+    public int GetRewardSeedCount()
+    {
+        return _rewardSeedCount;
+    }
+
+    public FeverTimeData GetCurrentFeverTimeData()
+    {
+        return _currentFeverTimeData;
+    }
+
+    public float GetTapInputElapsedTime()
+    {
+        return _tapInputElapsedTime;
+    }
+  
 }

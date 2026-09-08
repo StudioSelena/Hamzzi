@@ -133,8 +133,21 @@ public class ShopService
             }
 
             ServiceManager.Instance.HousingService.AddItem(selectedSlot);
+            SaveInventoryDate().Forget();
+
             Debug.Log($"아이템을 구매했다!  Id: {GetShopViewModel().SelectedSlot.ItemDataId}   이름: {GetShopViewModel().SelectedSlot.Name}");
         }
 
+    }
+
+    private async UniTask SaveInventoryDate()
+    {
+        var loginVm = ServiceManager.Instance.LoginService.GetViewModel();
+        if(loginVm != null)
+        {
+            await ServiceManager.Instance.HousingService.SaveAllInventoryData(loginVm.UserUID);
+            Debug.Log($"아이템 저장 완료!");
+        }
+       
     }
 }

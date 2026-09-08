@@ -160,6 +160,7 @@ public class ShopUI : ViewBase
     {
         ClearSubCategoryList();
 
+        //[TODO] 뷰모델로 빼보자!
         foreach (var itemKv in _shopVm.ItemList)
         {
             var slotVm = itemKv.Value;
@@ -237,7 +238,6 @@ public class ShopUI : ViewBase
                 break;
         }
     }
-
 
     private void OnSubCategorySelected(string subCategory)
     {

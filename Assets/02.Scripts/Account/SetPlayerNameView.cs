@@ -1,30 +1,44 @@
 ﻿using System.ComponentModel;
 using UnityEngine;
 using TMPro;
+using Cysharp.Threading.Tasks;
 
 public class SetPlayerNameView : UIBase
 {
     [SerializeField] private TMP_InputField InputField_Name;
     [SerializeField] private UIButton Button_Confirm;
+    [SerializeField] private UIButton Button_Close;
 
-    private SetPlayerNameViewModel _vm;
+    private LoginViewModel _loginVm;
+    private SetPlayerNameViewModel _setNameVm;
 
-
-    // 임시 테스트용 초기화
     private void Start()
     {
-        SetPlayerNameService testService = new SetPlayerNameService();
-        SetPlayerNameViewModel testVm = new SetPlayerNameViewModel();
+        SetPlayerNameService service = ServiceManager.Instance.SetPlayerNameService;
 
-        testVm.SetService(testService);
+        if (service != null)
+        {
+            BindViewModel(service.GetViewModel());
+        }
 
-        BindViewModel(testVm);
+        _loginVm = ServiceManager.Instance?.LoginService.GetViewModel();
+        _loginVm.OnCompleteLogin += UIClose;
     }
 
+    public void BindViewModel(SetPlayerNameViewModel vm)
+    {
+        _setNameVm = vm;
+
+        _setNameVm.PropertyChanged += OnPropChanged_View;
+        _setNameVm.OnCompleteSetName += OnCompleteSetName_View;
+        _setNameVm.OnFailSetName += OnFailSetName_View;
+        _setNameVm.OnCompleteSetName += OnCompleteEnter;
+    }
 
     private void OnEnable()
     {
         Button_Confirm.BindOnClickButtonEvent(OnClickConfirm);
+        Button_Close.BindOnClickButtonEvent(UIClose);
         InputField_Name.onValueChanged.AddListener(OnChangeName);
     }
 
@@ -35,51 +49,57 @@ public class SetPlayerNameView : UIBase
 
     private void OnDestroy()
     {
-        if (_vm != null)
+        if (_setNameVm != null)
         {
-            _vm.PropertyChanged -= OnPropChanged_View;
-            _vm.OnCompleteSetName -= OnCompleteSetName_View;
-            _vm.OnFailSetName -= OnFailSetName_View;
+            _setNameVm.PropertyChanged -= OnPropChanged_View;
+            _setNameVm.OnCompleteSetName -= OnCompleteSetName_View;
+            _setNameVm.OnFailSetName -= OnFailSetName_View;
+
+            _setNameVm.OnCompleteSetName -= OnCompleteEnter;
         }
-    }
-
-    public void BindViewModel(SetPlayerNameViewModel vm)
-    {
-        _vm = vm;
-
-        _vm.PropertyChanged += OnPropChanged_View;
-        _vm.OnCompleteSetName += OnCompleteSetName_View;
-        _vm.OnFailSetName += OnFailSetName_View;
     }
 
     private void OnPropChanged_View(object sender, PropertyChangedEventArgs e)
     {
-
     }
 
     private void OnChangeName(string text)
     {
-        if (_vm != null)
+        if (_setNameVm != null)
         {
-            _vm.InputName = text;
+            _setNameVm.InputName = text;
         }
     }
 
     private void OnClickConfirm()
     {
-        if (_vm != null)
+        if (_setNameVm != null)
         {
-            _vm.RequestSetPlayerName();
+            _setNameVm.RequestSetPlayerName();
         }
+    }
+
+    private void UIClose()
+    {
+        UIManager.Instance.CloseSetNameUI();
     }
 
     private void OnCompleteSetName_View()
     {
-        UIManager.Instance.CloseUI(UIRootType.PopupUI, UIType.SetPlayerNameUI);
+        Debug.Log("닉네임 설정 성공");
+        _loginVm.InvokeCompleteLogin();
     }
 
     private void OnFailSetName_View()
     {
-        InputField_Name.textComponent.color = Color.red;
+        Debug.Log("닉네임 설정 실패");
+    }
+
+    private void OnCompleteEnter()
+    {
+        if (_loginVm != null && _loginVm.UserUID != 0)
+        {
+            GameManager.Instance.InitMap(_loginVm.UserUID).Forget();
+        }
     }
 }

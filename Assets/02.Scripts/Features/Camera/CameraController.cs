@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] private Camera Camera_Main;
+    [SerializeField] private LayerMask _priorityLayerMask;
 
     [Header("기본 시야")]
     [SerializeField] private Vector3 Position_Overview = new Vector3(3f, 4f, -10);
@@ -40,13 +41,7 @@ public class CameraController : MonoBehaviour
     private bool _isViewRoom = false;
 
     private Transform _targetHamster;
-    private bool _isFollowing = false;
-    private Vector3 _currentOffset;
-
-    private void Awake()
-    {
-        SetOverview();
-    }
+    public bool IsFollowing { get; private set; } = false;
 
     private void Start()
     {
@@ -61,12 +56,7 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        if (_buildVM == null || _housingVM == null)
-        {
-            return;
-        }
-
-        if (_isFollowing)
+        if (IsFollowing)
         {
             return;
         }
@@ -76,7 +66,7 @@ public class CameraController : MonoBehaviour
             CheckNormalRoom();
         }
 
-        if (_buildVM.SelectType != BuildType.None || _buildVM.CanConfirm || _housingVM.TargetRoom != null || _housingVM.FurnitureVM != null)
+        if (_buildVM.CanConfirm || _housingVM.TargetRoom != null || _housingVM.FurnitureVM != null)
         {
             return;
         }
@@ -96,7 +86,12 @@ public class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (_isFollowing && _targetHamster != null)
+        if (_buildVM.SelectType != BuildType.None)
+        {
+            StopFollowHamster();
+        }
+
+        if (IsFollowing && _targetHamster != null)
         {
             if (_housingVM.CurrentViewMode == HousingViewMode.Garden)
             {
@@ -132,7 +127,10 @@ public class CameraController : MonoBehaviour
 
     private void OnDestroy()
     {
-        _housingVM.PropertyChanged -= OnPropertyChanged_VM;
+        if(_housingVM != null)
+        {
+            _housingVM.PropertyChanged -= OnPropertyChanged_VM;
+        }
     }
 
     private void OnPropertyChanged_VM(object sender, PropertyChangedEventArgs e)
@@ -158,6 +156,17 @@ public class CameraController : MonoBehaviour
                 break;
 
             case nameof(_housingVM.CurrentViewMode):
+                StopFollowHamster();
+
+                if (_housingVM.CurrentViewMode == HousingViewMode.OverView)
+                {
+                    if (_housingVM.TargetRoom != null)
+                    {
+                        _housingVM.TargetRoom = null;
+                        return;
+                    }
+                }
+
                 if (_housingVM.CurrentViewMode == HousingViewMode.Garden)
                 {
                     ShowGardenView().Forget();
@@ -215,7 +224,7 @@ public class CameraController : MonoBehaviour
 
                 if (_housingVM != null && _housingVM.CurrentViewMode == HousingViewMode.Garden)
                 {
-                    Vector3 move = Vector3.right * (-delta.x * factor);
+                    Vector3 move = Vector3.right * (-delta.x * factor * 5f);
                     targetPos = Camera_Main.transform.position + move;
                     targetPos.y = Position_Garden.y;
                     targetPos.z = Position_Garden.z;
@@ -269,7 +278,7 @@ public class CameraController : MonoBehaviour
 
             if (_housingVM.CurrentViewMode == HousingViewMode.Garden)
             {
-                Vector3 move = Vector3.right * (-mouseX * factor * 150f);
+                Vector3 move = Vector3.right * (-mouseX * factor * 5f);
                 targetPos = Camera_Main.transform.position + move;
                 targetPos.y = Position_Garden.y;
                 targetPos.z = Position_Garden.z;
@@ -316,17 +325,19 @@ public class CameraController : MonoBehaviour
         await TransitionCamera(targetPos, targetRotation, startMatrix, targetMatrix, false, Garden_FOV, _zoomCancel.Token);
     }
 
-    public async UniTask ShowOverview()
+    public async UniTask ShowOverview(bool moveCamera = true)
     {
         _isViewRoom = false;
         _zoomCancel?.Cancel();
         _zoomCancel = new CancellationTokenSource();
 
-        Vector3 targetPos = Position_Overview;
-        Quaternion targetRot = Quaternion.Euler(Rotation_Overview);
+        Vector3 targetPos = moveCamera ? Position_Overview : Camera_Main.transform.position;
+        Quaternion targetRot = moveCamera ? Quaternion.Euler(Rotation_Overview) : Camera_Main.transform.rotation;
 
         Matrix4x4 startMatrix = Camera_Main.projectionMatrix;
         Matrix4x4 targetMatrix = Matrix4x4.Ortho(-Size_Ortho * Camera_Main.aspect, Size_Ortho * Camera_Main.aspect, -Size_Ortho, Size_Ortho, Camera_Main.nearClipPlane, Camera_Main.farClipPlane);
+
+        float currentDuration = moveCamera ? Duration : 0f;
 
         await TransitionCamera(targetPos, targetRot, startMatrix, targetMatrix, true, 0f, _zoomCancel.Token);
     }
@@ -388,24 +399,33 @@ public class CameraController : MonoBehaviour
             }
         }
 
-        if (isTriggered)
+        if (!isTriggered)
         {
-            Ray ray = Camera_Main.ScreenPointToRay(inputPosition);
-            Plane mapPlane = new Plane(Vector3.forward, new Vector3(0, 0, 9f));
+            return;
+        }
 
-            if (mapPlane.Raycast(ray, out float hit))
+        Ray priorityRay = Camera_Main.ScreenPointToRay(inputPosition);
+
+        if (Physics.Raycast(priorityRay, out RaycastHit priorityHit, Mathf.Infinity, _priorityLayerMask))
+        {
+            return;
+        }
+
+        Ray ray = Camera_Main.ScreenPointToRay(inputPosition);
+        Plane mapPlane = new Plane(Vector3.forward, new Vector3(0, 0, 9f));
+
+        if (mapPlane.Raycast(ray, out float hit))
+        {
+            Vector3 hitPoint = ray.GetPoint(hit);
+            int gridX = Mathf.FloorToInt(hitPoint.x / 1.0f);
+            int gridY = Mathf.FloorToInt((hitPoint.y - 2.0f) / 1.0f);
+            Vector2Int gridPos = new Vector2Int(gridX, gridY);
+
+            if (_buildVM.Builds.TryGetValue(gridPos, out RoomViewModel roomVM))
             {
-                Vector3 hitPoint = ray.GetPoint(hit);
-                int gridX = Mathf.FloorToInt(hitPoint.x / 1.0f);
-                int gridY = Mathf.FloorToInt((hitPoint.y - 2.0f) / 1.0f);
-                Vector2Int gridPos = new Vector2Int(gridX, gridY);
-
-                if (_buildVM.Builds.TryGetValue(gridPos, out RoomViewModel roomVM))
+                if (roomVM.BuildType == BuildType.Room)
                 {
-                    if (roomVM.BuildType == BuildType.Room)
-                    {
-                        FocusRoomInGame(roomVM);
-                    }
+                    FocusRoomInGame(roomVM);
                 }
             }
         }
@@ -420,59 +440,61 @@ public class CameraController : MonoBehaviour
 
         float elapsedTime = 0f;
 
-        while (elapsedTime < Duration)
+        Matrix4x4 currentMatrix = new Matrix4x4();
+
+        try
         {
-            if (token.IsCancellationRequested)
+            while (elapsedTime < Duration)
             {
-                return;
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                elapsedTime += Time.deltaTime;
+                float time = Mathf.SmoothStep(0f, 1f, elapsedTime / Duration);
+
+                Camera_Main.transform.position = Vector3.Lerp(startPos, targetPos, time);
+                Camera_Main.transform.rotation = Quaternion.Lerp(startRot, targetRot, time);
+                Camera_Main.projectionMatrix = MatrixLerp(startMatrix, targetMatrix, time, ref currentMatrix);
+
+                await UniTask.Yield(PlayerLoopTiming.Update, token);
             }
 
-            elapsedTime += Time.deltaTime;
-            float time = Mathf.SmoothStep(0f, 1f, elapsedTime / Duration);
+            if (!token.IsCancellationRequested)
+            {
+                Camera_Main.transform.position = targetPos;
+                Camera_Main.transform.rotation = targetRot;
+                Camera_Main.orthographic = endIsOrtho;
+                Camera_Main.ResetProjectionMatrix();
 
-            Camera_Main.transform.position = Vector3.Lerp(startPos, targetPos, time);
-            Camera_Main.transform.rotation = Quaternion.Lerp(startRot, targetRot, time);
-            Camera_Main.projectionMatrix = MatrixLerp(startMatrix, targetMatrix, time);
-
-            await UniTask.Yield(PlayerLoopTiming.Update, token);
+                if (endIsOrtho)
+                {
+                    Camera_Main.orthographicSize = Size_Ortho;
+                }
+                else
+                {
+                    Camera_Main.fieldOfView = targetFOV;
+                }
+            }
         }
-
-        Camera_Main.transform.position = targetPos;
-        Camera_Main.transform.rotation = targetRot;
-        Camera_Main.orthographic = endIsOrtho;
-        Camera_Main.ResetProjectionMatrix();
-
-        if (endIsOrtho)
+        catch (System.OperationCanceledException)
         {
-            Camera_Main.orthographicSize = Size_Ortho;
         }
-        else
+        finally
         {
-            Camera_Main.fieldOfView = targetFOV;
+            _isTransition = false;
         }
-
-        _isTransition = false;
     }
 
-    private Matrix4x4 MatrixLerp(Matrix4x4 start, Matrix4x4 end, float time)
+    private Matrix4x4 MatrixLerp(Matrix4x4 start, Matrix4x4 end, float time, ref Matrix4x4 result)
     {
-        Matrix4x4 matrix = new Matrix4x4();
+        result.SetRow(0, Vector4.Lerp(start.GetRow(0), end.GetRow(0), time));
+        result.SetRow(1, Vector4.Lerp(start.GetRow(1), end.GetRow(1), time));
+        result.SetRow(2, Vector4.Lerp(start.GetRow(2), end.GetRow(2), time));
+        result.SetRow(3, Vector4.Lerp(start.GetRow(3), end.GetRow(3), time));
 
-        for (int i = 0; i < 16; i++)
-        {
-            matrix[i] = Mathf.Lerp(start[i], end[i], time);
-        }
-
-        return matrix;
-    }
-
-    private void SetOverview()
-    {
-        Camera_Main.orthographic = true;
-        Camera_Main.orthographicSize = Size_Ortho;
-        Camera_Main.transform.position = Position_Overview;
-        Camera_Main.transform.rotation = Quaternion.Euler(Rotation_Overview);
-        Camera_Main.ResetProjectionMatrix();
+        return result;
     }
 
     private Vector3 GetRoomCenterPos(RoomViewModel roomVM)
@@ -494,13 +516,13 @@ public class CameraController : MonoBehaviour
     public void StartFollowHamster(Transform target)
     {
         _targetHamster = target;
-        _isFollowing = true;
+        IsFollowing = true;
     }
 
     public void StopFollowHamster()
     {
         _targetHamster = null;
-        _isFollowing = false;
+        IsFollowing = false;
     }
 
     private void CancelZoom()
