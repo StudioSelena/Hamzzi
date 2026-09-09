@@ -70,24 +70,44 @@ public class GachaView : ViewBase
         DrawTenPriceText.text = $"{price * 10}";
     }
 
-    private string DrawHamster()
+    private HamsterSave DrawHamster()
     {
         HamsterSave hamsterSave = ServiceManager.Instance.GachaService.DrawGacha();
-        _collectionViewModel.AddCollectedHamsterList(hamsterSave);
+
+        if(CheckCollectedHamster(hamsterSave) != true)
+        {
+            _collectionViewModel.AddCollectedHamsterList(hamsterSave);
+        }
         Debug.Log($"{hamsterSave.HamsterId}, {hamsterSave.FaceId} ");
 
-        return hamsterSave.HamsterId;
+        return hamsterSave;
+    }
+
+    private bool CheckCollectedHamster(HamsterSave hamsterSave)
+    {
+        string hamsterId = hamsterSave.HamsterId;
+        string faceId = hamsterSave.FaceId;
+
+        if (_collectionViewModel.CollectedFaceByHamsterList.TryGetValue(hamsterId, out var collectedFaceId) == true)
+        {
+            if(collectedFaceId.ContainsKey(faceId) == true)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void DrawOneHamster()
     {
-        List<string> drawHamsterIdList = new List<string>();
+        List<HamsterSave> drawHamsterList = new List<HamsterSave>();
 
-        string hamsterId = DrawHamster();
-        drawHamsterIdList.Add(hamsterId);
+        var hamsterSave = DrawHamster();
+        drawHamsterList.Add(hamsterSave);
 
         GachaResultView.gameObject.SetActive(true);
-        GachaResultView.ShowGachaResult(drawHamsterIdList);
+        GachaResultView.ShowGachaResult(drawHamsterList);
 
         int price = GachaViewModel.GachaPrice;
         _userViewModel.TryUseSeed(price);
@@ -95,15 +115,15 @@ public class GachaView : ViewBase
 
     private void DrawTenHamster()
     {
-        List<string> drawHamsterIdList = new List<string>();
+        List<HamsterSave> drawHamsterList = new List<HamsterSave>();
         for (int i = 0; i < 10; i++)
         {
-            string hamsterId = DrawHamster();
-            drawHamsterIdList.Add(hamsterId);
+            var hamsterSave = DrawHamster();
+            drawHamsterList.Add(hamsterSave);
         }
 
         GachaResultView.gameObject.SetActive(true);
-        GachaResultView.ShowGachaResult(drawHamsterIdList);
+        GachaResultView.ShowGachaResult(drawHamsterList);
 
         int price = GachaViewModel.GachaPrice;
         _userViewModel.TryUseSeed(price * 10);
