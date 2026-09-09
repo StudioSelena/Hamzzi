@@ -125,6 +125,7 @@ public class ShopUI : ViewBase
         }
 
         ServiceManager.Instance.ShopService.BuyItem();
+        SoundManager.Instance.PlaySFX("Buy_Item");
     }
 
     private void SetShopLayoutByCategory(ShopCategory category)

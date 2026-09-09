@@ -7,13 +7,21 @@ public class SoundManager : SingletonBase<SoundManager>
     [SerializeField] private AudioSource AudioSource_BGM;
     [SerializeField] private AudioSource AudioSource_SFX;
 
+    private const string BGM_VOLUME_KEY = "BGMVolume";
+    private const string SFX_VOLUME_KEY = "SFXVolume";
+
     public event Action<float> OnChangedBGMVolume;
     public event Action<float> OnChangedSFXVolume;
 
-    //[TODO] 나라: 일단 비지엠 시작 여기다 넣음
     private void Start()
     {
-        PlayBGM("Bgm");
+        float bgmVolume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, 1.0f);
+        float sfxVolume = PlayerPrefs.GetFloat(SFX_VOLUME_KEY, 1.0f);
+
+        AudioSource_BGM.volume = bgmVolume;
+        AudioSource_SFX.volume = sfxVolume;
+
+        PlayBGM("Bgm", bgmVolume);
     }
 
     private async UniTaskVoid LoadAndPlayAudioClip(AudioSource audioSource, string path, bool isLoop = false, float volume = 1.0f)
@@ -76,6 +84,10 @@ public class SoundManager : SingletonBase<SoundManager>
         }
 
         AudioSource_BGM.volume = volume;
+
+        PlayerPrefs.SetFloat(BGM_VOLUME_KEY, volume);
+        PlayerPrefs.Save();
+
         OnChangedBGMVolume?.Invoke(volume);
     }
 
@@ -92,6 +104,10 @@ public class SoundManager : SingletonBase<SoundManager>
         }
 
         AudioSource_SFX.volume = volume;
+
+        PlayerPrefs.SetFloat(SFX_VOLUME_KEY, volume);
+        PlayerPrefs.Save();
+
         OnChangedSFXVolume?.Invoke(volume);
     }
 }
