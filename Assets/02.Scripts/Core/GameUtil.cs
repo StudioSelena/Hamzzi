@@ -34,6 +34,17 @@ public static class GameUtil
         return Mathf.CeilToInt(elapsedSeconds * productionPerSec); //올림 처리
     }
 
+    // 씨앗 수집 능력(배율)로 BT 채집 사이클의 구간 시간을 계산한다. 배율이 높을수록 짧아진다
+    public static float CalculateCollectCycleSeconds(float baseSeconds, float collectSpeed)
+    {
+        if (collectSpeed <= 0f)
+        {
+            return baseSeconds;
+        }
+
+        return baseSeconds / collectSpeed;
+    }
+
     // UID 생성 기능
     public static long GenerateUID()
     {
