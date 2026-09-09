@@ -47,6 +47,11 @@ public class BuildViewModel : ViewModelBase
         }
     }
 
+    public bool IsBuildingNewRoom
+    {
+        get => _waitingRoom != null;
+    }
+
     private RoomViewModel _selectRoom;
     public RoomViewModel SelectRoom
     {
@@ -59,6 +64,7 @@ public class BuildViewModel : ViewModelBase
                 OnPropertyChanged(nameof(SelectRoom));
                 OnPropertyChanged(nameof(CanDestroy));
                 OnPropertyChanged(nameof(CanConnectAisle));
+                OnPropertyChanged(nameof(CurrentRoomCost));
             }
         }
     }
@@ -115,6 +121,24 @@ public class BuildViewModel : ViewModelBase
         {
             _destroyedInstanceIDs = value;
             OnPropertyChanged(nameof(DestroyedInstanceIDs));
+        }
+    }
+
+    public int CurrentRoomCost
+    {
+        get
+        {
+            int roomCount = 0;
+
+            foreach (var roomVM in Builds.Values)
+            {
+                if (roomVM.BuildType == BuildType.Room && !roomVM.IsDefault)
+                {
+                    roomCount++;
+                }
+            }
+
+            return 1000 + (roomCount * 500);
         }
     }
 
