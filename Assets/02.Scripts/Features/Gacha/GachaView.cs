@@ -73,10 +73,30 @@ public class GachaView : ViewBase
     private HamsterSave DrawHamster()
     {
         HamsterSave hamsterSave = ServiceManager.Instance.GachaService.DrawGacha();
-        _collectionViewModel.AddCollectedHamsterList(hamsterSave);
+
+        if(CheckCollectedHamster(hamsterSave) != true)
+        {
+            _collectionViewModel.AddCollectedHamsterList(hamsterSave);
+        }
         Debug.Log($"{hamsterSave.HamsterId}, {hamsterSave.FaceId} ");
 
         return hamsterSave;
+    }
+
+    private bool CheckCollectedHamster(HamsterSave hamsterSave)
+    {
+        string hamsterId = hamsterSave.HamsterId;
+        string faceId = hamsterSave.FaceId;
+
+        if (_collectionViewModel.CollectedFaceByHamsterList.TryGetValue(hamsterId, out var collectedFaceId) == true)
+        {
+            if(collectedFaceId.ContainsKey(faceId) == true)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void DrawOneHamster()
