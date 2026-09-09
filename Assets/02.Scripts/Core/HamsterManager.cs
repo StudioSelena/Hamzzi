@@ -3,11 +3,16 @@ using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Unity.Behavior;
 
 public class HamsterManager : SingletonBase<HamsterManager>
 {
     private const string HamsterPrefabAddress = "Hamster/Hamster_00";
     private const float MinMeasureSeconds = 30f;
+    private const float BaseIdleDurationSeconds = 3f;
+    private const float BaseFarmDurationSeconds = 2f;
+    private const string IdleDurationVariableName = "IdleDuration";
+    private const string FarmDurationVariableName = "FarmDuration";
 
     [SerializeField] private Vector3 _gardenSpawnRangeMin;
     [SerializeField] private Vector3 _gardenSpawnRangeMax;
@@ -165,8 +170,44 @@ public class HamsterManager : SingletonBase<HamsterManager>
         hamsterForm.SetFaceMesh(hamsterSave.FaceId);
 
         agent.enabled = true;
+        SetHamsterCollectCycle(hamsterObject, hamsterSave.HamsterId);
 
         _spawnedHamsterObjectDict[hamsterSave.HamsterUID] = hamsterObject;
+    }
+
+    // 햄스터의 씨앗 수집 능력에 맞춰 BT의 채집 사이클 시간을 설정한다
+    private void SetHamsterCollectCycle(GameObject hamsterObject, string hamsterId)
+    {
+        HamsterData hamsterData = GameDataManager.Instance.GetData<HamsterData>(hamsterId);
+
+        if (hamsterData == null)
+        {
+            return;
+        }
+
+        BehaviorGraphAgent behaviorAgent = hamsterObject.GetComponent<BehaviorGraphAgent>();
+
+        if (behaviorAgent == null)
+        {
+            return;
+        }
+
+        float idleDuration = GameUtil.CalculateCollectCycleSeconds(BaseIdleDurationSeconds, hamsterData.CollectSpeed);
+        float farmDuration = GameUtil.CalculateCollectCycleSeconds(BaseFarmDurationSeconds, hamsterData.CollectSpeed);
+
+        bool isIdleSet = behaviorAgent.SetVariableValue(IdleDurationVariableName, idleDuration);
+        bool isFarmSet = behaviorAgent.SetVariableValue(FarmDurationVariableName, farmDuration);
+
+#if UNITY_EDITOR
+        if (isIdleSet == false || isFarmSet == false)
+        {
+            Debug.LogError($"[채집 주기] Blackboard 변수 이름을 찾지 못했습니다. Idle={isIdleSet} Farm={isFarmSet}");
+        }
+        else
+        {
+            Debug.Log($"[채집 주기] {hamsterData.Name} 배율 {hamsterData.CollectSpeed} → Idle {idleDuration:F2}초 / Farm {farmDuration:F2}초");
+        }
+#endif
     }
 
     private Vector3 GetRandomGardenSpawnPosition()
