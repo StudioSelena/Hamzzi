@@ -213,8 +213,6 @@ public class HousingView : ViewBase
                     string instanceID = furnitureView.FurnitureVM.InstanceID;
                     _housingService.RemoveSpawnFurniture(instanceID);
 
-                    SoundManager.Instance.PlaySFX("Select_Furniture");
-
                     _housingVM.SelectInstallFurniture(furnitureView.FurnitureVM);
 
                     return true;
@@ -417,7 +415,7 @@ public class HousingView : ViewBase
 
         _lastGhostAngle = _housingVM.FurnitureVM.RotationAngle;
 
-        SoundManager.Instance.PlaySFX("Select_Furniture", 0.6f);
+        SoundManager.Instance.PlaySFX("Select_Furniture");
 
         if (_ghostObject.TryGetComponent<FurnitureView>(out var furnitureView))
         {
