@@ -254,7 +254,7 @@ public class CameraController : MonoBehaviour
 
         if (Mathf.Abs(scroll) > 0.001f)
         {
-            ApplyZoom(scroll * Zoom_Sensitive * 100f);
+            ApplyZoom(scroll * Zoom_Sensitive * 130f);
         }
 
         if (Input.GetMouseButton(1))
@@ -278,14 +278,14 @@ public class CameraController : MonoBehaviour
 
             if (_housingVM.CurrentViewMode == HousingViewMode.Garden)
             {
-                Vector3 move = Vector3.right * (-mouseX * factor * 5f);
+                Vector3 move = Vector3.right * (-mouseX * factor * 200f);
                 targetPos = Camera_Main.transform.position + move;
                 targetPos.y = Position_Garden.y;
                 targetPos.z = Position_Garden.z;
             }
             else
             {
-                Vector3 move = (-Camera_Main.transform.right * mouseX * factor * 150f - Camera_Main.transform.up * mouseY * factor * 150f);
+                Vector3 move = (-Camera_Main.transform.right * mouseX * factor * 100f - Camera_Main.transform.up * mouseY * factor * 100f);
                 targetPos = Camera_Main.transform.position + move;
                 targetPos.y = Mathf.Clamp(targetPos.y, Bound_Min.y, Bound_Max.y);
             }
