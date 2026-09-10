@@ -447,6 +447,17 @@ public class BuildViewModel : ViewModelBase
 
     public void ConfirmBuild()
     {
+        if (_waitingRoom != null)
+        {
+            int buildCost = CurrentRoomCost;
+            bool success = ServiceManager.Instance.UserService.GetUserViewModel().TryUseSeed(buildCost);
+
+            if (success == false)
+            {
+                return;
+            }
+        }
+
         DeselectRoom();
 
         if (_waitingRoom != null)
