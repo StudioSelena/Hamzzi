@@ -8,6 +8,9 @@ public class CollectionViewModel : ViewModelBase, IContainerPropertyChanged<stri
 {
     public event Action<string, ContainerEventType, string> ContainerPropertyChanged;
 
+    private int _maxPlacedHamster = 20;
+    public int MaxPlacedHamster => _maxPlacedHamster;
+
     // 보유 중인 햄스터의 상세 데이터 저장
     private Dictionary<long, HamsterSave> _collectedHamsterList = new Dictionary<long, HamsterSave>();
     public Dictionary<long, HamsterSave> CollectedHamsterList
@@ -19,6 +22,21 @@ public class CollectionViewModel : ViewModelBase, IContainerPropertyChanged<stri
             {
                 _collectedHamsterList = value;
                 OnPropertyChanged(nameof(CollectedHamsterList));
+            }
+        }
+    }
+
+    // 맵에 배치된 햄스터 UID
+    private HashSet<long> _placedHamsterUIDList = new HashSet<long>();
+    public HashSet<long> PlacedHamsterUIDList
+    {
+        get { return _placedHamsterUIDList; }
+        set
+        {
+            if (_placedHamsterUIDList != value)
+            {
+                _placedHamsterUIDList = value;
+                OnPropertyChanged(nameof(PlacedHamsterUIDList));
             }
         }
     }

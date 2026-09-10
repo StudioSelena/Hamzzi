@@ -37,6 +37,7 @@ public enum UIType
     FriendRequestListUI,
     CrossUI,
     ProfileSettingUI,
+    StorageUI,
 }
 
 public static class UIManagerExtension
