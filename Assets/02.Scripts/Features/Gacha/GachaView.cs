@@ -90,7 +90,7 @@ public class GachaView : ViewBase
 
         if (_collectionViewModel.CollectedFaceByHamsterList.TryGetValue(hamsterId, out var collectedFaceId) == true)
         {
-            if(collectedFaceId.ContainsKey(faceId) == true)
+            if(collectedFaceId.Contains(faceId) == true)
             {
                 return true;
             }

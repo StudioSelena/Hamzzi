@@ -23,8 +23,9 @@ public class CollectionViewModel : ViewModelBase, IContainerPropertyChanged<stri
         }
     }
 
-    private Dictionary<string, Dictionary<string, int>> _collectedFaceByHamsterList = new Dictionary<string, Dictionary<string, int>>();
-    public Dictionary<string, Dictionary<string, int>> CollectedFaceByHamsterList
+    // 햄스터 종류에 따라 보유한 얼굴ID 저장
+    private Dictionary<string, HashSet<string>> _collectedFaceByHamsterList = new Dictionary<string, HashSet<string>>();
+    public Dictionary<string, HashSet<string>> CollectedFaceByHamsterList
     {
         get { return _collectedFaceByHamsterList; }
         set
@@ -52,6 +53,7 @@ public class CollectionViewModel : ViewModelBase, IContainerPropertyChanged<stri
         }
     }
 
+    // 현재 도감에서 선택된 햄스터 아이디
     private string _currentSelectHamsterId = "Hamster_01";
     public string CurrentSelectHamsterId
     {
@@ -66,6 +68,7 @@ public class CollectionViewModel : ViewModelBase, IContainerPropertyChanged<stri
         }
     }
 
+    // 현재 도감에서 선택된 얼굴 아이디
     private string _currentSelectedHamsterFaceId = "Face_01";
     public string CurrentSelectedHamsterFaceId
     {
@@ -104,18 +107,11 @@ public static class HamsterViewModelExtention
 
         if(collectionViewModel.CollectedFaceByHamsterList.ContainsKey(hamsterSave.HamsterId) == false)
         {
-            collectionViewModel.CollectedFaceByHamsterList.Add(hamsterSave.HamsterId, new Dictionary<string, int>());
+            collectionViewModel.CollectedFaceByHamsterList.Add(hamsterSave.HamsterId, new HashSet<string>());
         }
 
         var faceList = collectionViewModel.CollectedFaceByHamsterList[hamsterSave.HamsterId];
-        if (faceList.TryGetValue(hamsterSave.FaceId, out int currentCount))
-        {
-            faceList[hamsterSave.FaceId] = currentCount + 1;
-        }
-        else
-        {
-            faceList[hamsterSave.FaceId] = 1;
-        }
+        faceList.Add(hamsterSave.FaceId);
 
         collectionViewModel.InvokeContainerPropertyChanged(nameof(collectionViewModel.CollectedHamsterIdList), ContainerEventType.Add, hamsterSave.HamsterId);
         collectionViewModel.InvokeContainerPropertyChanged(nameof(collectionViewModel.CollectedFaceByHamsterList), ContainerEventType.Add, hamsterSave.FaceId);
@@ -146,17 +142,7 @@ public static class HamsterViewModelExtention
         }
 
         collectionViewModel.CollectedHamsterList.Remove(targetUID);
-        int count = collectionViewModel.CollectedFaceByHamsterList[hamsterId][faceId] - 1;
-        collectionViewModel.CollectedFaceByHamsterList[hamsterId][faceId] = count;
-        if (count < 1)
-        {
-            collectionViewModel.CollectedFaceByHamsterList[hamsterId].Remove(faceId);
-
-            if(collectionViewModel.CollectedFaceByHamsterList[hamsterId].Count <= 0)
-            {
-                collectionViewModel.CollectedHamsterIdList.Remove(hamsterId);
-            }
-        }
+        collectionViewModel.CollectedFaceByHamsterList[hamsterId].Remove(faceId);
 
         collectionViewModel.InvokeContainerPropertyChanged(nameof(collectionViewModel.CollectedHamsterIdList), ContainerEventType.Remove, hamsterId);
         collectionViewModel.InvokeContainerPropertyChanged(nameof(collectionViewModel.CollectedFaceByHamsterList), ContainerEventType.Remove, faceId);

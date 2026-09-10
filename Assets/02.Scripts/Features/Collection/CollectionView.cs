@@ -249,7 +249,7 @@ public class CollectionView : UIBase
         {
             return false;
         }
-        return faceList[currentHamsterId].ContainsKey(faceId);
+        return faceList[currentHamsterId].Contains(faceId);
     }
 
     private void SortSlotsByTier()
@@ -324,9 +324,8 @@ public class CollectionView : UIBase
             return;
         }
 
-        foreach (var kv in collectedFaceList[currentHamsterId])
+        foreach (var faceId in collectedFaceList[currentHamsterId])
         {
-            string faceId = kv.Key;
             FaceSlot slot = _spawnedFaceSlotList[faceId];
             slot.UpdateLockImage(true);
 
@@ -357,13 +356,13 @@ public class CollectionView : UIBase
 
         _hamsterModelViewModel.FaceId = faceId;
 
-        int count = 0;
-        if (_collectionViewModel.CollectedFaceByHamsterList.TryGetValue(hamsterId, out var faceDict))
-        {
-            faceDict.TryGetValue(faceId, out count);
-        }
+        //int count = 0;
+        //if (_collectionViewModel.CollectedFaceByHamsterList.TryGetValue(hamsterId, out var faceDict))
+        //{
+        //    faceDict.TryGetValue(faceId, out count);
+        //}
 
-        HamsterCount.text = $"보유 : {count:D2}";
+        //HamsterCount.text = $"보유 : {count:D2}";
     }
 
     private void KickHamster()
