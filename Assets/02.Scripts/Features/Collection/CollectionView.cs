@@ -31,8 +31,6 @@ public class CollectionView : UIBase
     private Dictionary<string, HamsterSlot> _spawnedHamsterSlotList = new Dictionary<string, HamsterSlot>();
     private Dictionary<string, FaceSlot> _spawnedFaceSlotList = new Dictionary<string, FaceSlot>();
 
-    private HamsterForm _modelForm;
-
     private CollectionViewModel _collectionViewModel;
     private HamsterViewModel _hamsterViewModel;
     private HamsterModelViewModel _hamsterModelViewModel;

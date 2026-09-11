@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class StorageView : ViewBase
@@ -9,14 +10,13 @@ public class StorageView : ViewBase
     [SerializeField] private Transform StorageHamsterContent;
 
     [Header("배치 햄스터 관련")]
+    private List<StorageSlot> _spawnedPlacedSlotList = new List<StorageSlot>();
 
     [Header("창고 햄스터 관련")]
+    private List<StorageSlot> _spawnedStorageSlotList = new List<StorageSlot>();
 
     private CollectionViewModel _collectionViewModel;
     private int _maxStorageSlotCount = 100;
-
-    private List<StorageSlot> _spawnedPlacedSlotList = new List<StorageSlot>();
-    private List<StorageSlot> _spawnedStorageSlotList = new List<StorageSlot>();
 
     private void Awake()
     {
@@ -37,23 +37,47 @@ public class StorageView : ViewBase
         int maxPlacedHamster = _collectionViewModel.MaxPlacedHamster;
         int spawndPlacedSlotCount = _spawnedPlacedSlotList.Count;
 
+        // 햄스터 슬롯 생성
         for(int i = spawndPlacedSlotCount; i < maxPlacedHamster; i++)
         {
             GameObject slotObject = Instantiate(StorageSlotPrefab, PlacedHamsterContent);
             var slotComponent = slotObject.GetComponent<StorageSlot>();
             _spawnedPlacedSlotList.Add(slotComponent);
         }
+
+        // 배치된 햄스터 설정
     }
 
     private void UpdateStorageSlot()
     {
-        int spawndStorageSlotCount = _spawnedStorageSlotList.Count;
+        var storageHamsters = _collectionViewModel.CollectedHamsterList
+            .Where(kvp => !_collectionViewModel.PlacedHamsterUIDList.Contains(kvp.Key))
+            .Select(kvp => kvp.Value)
+            .ToList();
 
-        for(int i = spawndStorageSlotCount; i < _maxStorageSlotCount; i++)
+        int allHamsterCount = _collectionViewModel.CollectedHamsterList.Count;
+        int placedHamsterCount = _collectionViewModel.PlacedHamsterUIDList.Count;
+
+        int spawndStorageSlotCount = allHamsterCount - placedHamsterCount;
+        int currentSpawnedSlotCount = _spawnedPlacedSlotList.Count;
+
+        // 창고에 있는 햄스터 슬롯 업데이트
+        for (int i = currentSpawnedSlotCount; i < spawndStorageSlotCount; i++)
         {
             GameObject slotObject = Instantiate(StorageSlotPrefab, StorageHamsterContent);
             var slotComponent = slotObject.GetComponent<StorageSlot>();
             _spawnedStorageSlotList.Add(slotComponent);
+        }
+
+        for(int i = 0; i < _spawnedStorageSlotList.Count; i++)
+        {
+            if(i < storageHamsters.Count)
+            {
+                HamsterSave hamsterSave = storageHamsters[i];
+                _spawnedStorageSlotList[i].gameObject.SetActive(true);
+
+                _spawnedStorageSlotList[i].SetStorageSlot(hamsterSave);
+            }
         }
     }
 }
