@@ -37,7 +37,8 @@ public enum UIType
     FriendRequestListUI,
     CrossUI,
     ProfileSettingUI,
-    StealSeedUI
+    StealSeedUI,
+    StealSeedResultUI
 }
 
 public static class UIManagerExtension
@@ -200,5 +201,20 @@ public static class UIManagerExtension
     public static void CloseStealSeedUI(this UIManager uiManager)
     {
         uiManager.CloseUI(UIRootType.PopupUI, UIType.StealSeedUI);
+    }
+
+    public static void OpenStealSeedResultUI(this UIManager uiManager, int stealSeedCount)
+    {
+        var openedUI = uiManager.OpenUI(UIRootType.PopupUI, UIType.StealSeedResultUI);
+        var stealSeedResultUI = openedUI as StealSeedResultUI;
+        if (stealSeedResultUI != null)
+        {
+            stealSeedResultUI.SetStealSeedCount(stealSeedCount);
+        }
+    }
+
+    public static void CloseStealSeedResultUI(this UIManager uiManager)
+    {
+        uiManager.CloseUI(UIRootType.PopupUI, UIType.StealSeedResultUI);
     }
 }

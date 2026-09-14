@@ -17,6 +17,7 @@ public class StealSeedUI : ViewBase
     [SerializeField] private TMP_Text Text_ThirdNumber;
 
     private CancellationTokenSource _cancelToken;
+    private int _stealSeedCount;
 
     private void OnEnable()
     {
@@ -43,11 +44,15 @@ public class StealSeedUI : ViewBase
         float interval = 0.08f;
         float elapsedTime = 0f;
 
-        while(elapsedTime < duration)
+        int firstnumber = 0;
+        int secondnumber = 0;
+        int thirdnumber = 0;
+
+        while (elapsedTime < duration)
         {
-            int firstnumber = UnityEngine.Random.Range(0, 10);
-            int secondnumber = UnityEngine.Random.Range(0, 10);
-            int thirdnumber = UnityEngine.Random.Range(0, 10);
+            firstnumber = UnityEngine.Random.Range(0, 10);
+            secondnumber = UnityEngine.Random.Range(0, 10);
+            thirdnumber = UnityEngine.Random.Range(0, 10);
 
             Text_FirstNumber.text = firstnumber.ToString();
             Text_SecondNumber.text = secondnumber.ToString();
@@ -57,7 +62,11 @@ public class StealSeedUI : ViewBase
 
             elapsedTime += interval;
         }
-        
+
+        _stealSeedCount = (firstnumber * 100) + (secondnumber * 10) + thirdnumber;
+
+        await UniTask.Delay(TimeSpan.FromSeconds(0.8f), cancellationToken: _cancelToken.Token);
+        UIManager.Instance.OpenStealSeedResultUI(_stealSeedCount);
     }
 }
 
