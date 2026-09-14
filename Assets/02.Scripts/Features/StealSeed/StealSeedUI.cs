@@ -24,6 +24,8 @@ public class StealSeedUI : ViewBase
         Button_CloseBack.BindOnClickButtonEvent(OnClick_Close);
         Button_Close.BindOnClickButtonEvent(OnClick_Close);
         Button_StealSeed.BindOnClickButtonEvent(OnClick_StealSeed);
+
+        ResetSeedCount();
     }
 
     private void OnClick_Close()
@@ -67,6 +69,15 @@ public class StealSeedUI : ViewBase
 
         await UniTask.Delay(TimeSpan.FromSeconds(0.8f), cancellationToken: _cancelToken.Token);
         UIManager.Instance.OpenStealSeedResultUI(_stealSeedCount);
+    }
+
+    private void ResetSeedCount()
+    {
+        Text_FirstNumber.text = "?";
+        Text_SecondNumber.text = "?";
+        Text_ThirdNumber.text = "?";
+
+        _stealSeedCount = 0;
     }
 }
 
