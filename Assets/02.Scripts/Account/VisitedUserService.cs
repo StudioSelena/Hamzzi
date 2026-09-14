@@ -7,7 +7,8 @@ public class VisitedUserInfoData
 {
     public long UserUid = 0;
     public string UserName = "";
-    public string UserIconId = "";
+    public string UserIconId = ""; 
+    public int SeedCount = 0;
 }
 
 public class VisitedUserService
@@ -41,7 +42,7 @@ public class VisitedUserService
             {
                 await conn.OpenAsync();
 
-                string query = $"SELECT User_Name, User_Icon_Data_ID FROM {DBConfig.UserGameTable} WHERE User_UID = @uid;";
+                string query = $"SELECT User_Name, User_Icon_Data_ID, Gold_Count FROM {DBConfig.UserGameTable} WHERE User_UID = @uid;";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
@@ -55,6 +56,7 @@ public class VisitedUserService
                             resultData.UserUid = CurrentVisitedUid;
                             resultData.UserName = reader.GetString(0);
                             resultData.UserIconId = reader.GetString(1);
+                            resultData.SeedCount = reader.GetInt32(2);
                         }
                     }
                 }
