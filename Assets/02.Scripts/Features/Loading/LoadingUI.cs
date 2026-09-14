@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class LoadingUI : UIBase
 {
+    [SerializeField] private Image Image_Background;
     [SerializeField] private RawImage RawImage_Loading;   
     [SerializeField] private Slider Slider_LoadingBar;
     [SerializeField] private TMP_Text Text_loading;
@@ -21,6 +22,8 @@ public class LoadingUI : UIBase
     private void OnEnable()
     {
         _cancelToken = new CancellationTokenSource();
+
+        Image_Background.gameObject.SetActive(true);
 
         LoadAndSetLoadingImg().Forget();
         PlayLoadingText().Forget();
@@ -40,6 +43,7 @@ public class LoadingUI : UIBase
         Slider_LoadingBar.value = 0f;
 
         // 이전 이미지 안 보이게
+        RawImage_Loading.enabled = false;
         RawImage_Loading.texture = null;
 
         int randomIdx = UnityEngine.Random.Range(0, 2);
@@ -61,6 +65,7 @@ public class LoadingUI : UIBase
 
         // 새 이미지 준비된 뒤 표시
         RawImage_Loading.enabled = true;
+        Image_Background.gameObject.SetActive(false);
 
         await UniTask.Yield();
     }
