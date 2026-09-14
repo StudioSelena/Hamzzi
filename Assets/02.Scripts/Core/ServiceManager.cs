@@ -20,6 +20,7 @@ public class ServiceManager : SingletonBase<ServiceManager>
     public VisitedUserService VisitedUserService { get; private set; }
     public ProfileSettingService ProfileSettingService { get; private set; }
     public HamsterModelService HamsterModelService { get; private set; }
+    public ChangePlayerNameService ChangePlayerNameService { get; private set; }
 
     public void Start()
     {
@@ -48,6 +49,7 @@ public class ServiceManager : SingletonBase<ServiceManager>
         InitVisitedUserService();
         InitProfileSettingService();
         InitModelViewrService();
+        InitChangePlayerNameService();
     }
 
     private void InitShopService()
@@ -137,6 +139,11 @@ public class ServiceManager : SingletonBase<ServiceManager>
     {
         HamsterModelService = new HamsterModelService();
         HamsterModelService.GetHamsterModelViewModel();
+    }
+
+    private void InitChangePlayerNameService()
+    {
+        ChangePlayerNameService = new ChangePlayerNameService();
     }
 
     public void LoadDataFromDB()

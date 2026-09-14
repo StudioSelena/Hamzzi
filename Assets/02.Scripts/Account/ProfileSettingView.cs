@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ProfileSettingView : ViewBase
+public class ProfileSettingView : UIBase
 {
     [SerializeField] private Transform Transform_Content;
     [SerializeField] private GameObject Prefab_IconSlot;
     [SerializeField] private UIButton Button_Close;
+    [SerializeField] private UIButton Button_ChangePlayerName;
 
     private ProfileSettingViewModel _vm;
     private List<GameObject> _spawnedSlots = new List<GameObject>();
@@ -23,6 +24,7 @@ public class ProfileSettingView : ViewBase
     private void OnEnable()
     {
         Button_Close.BindOnClickButtonEvent(OnClickClose);
+        Button_ChangePlayerName.BindOnClickButtonEvent(OnClickChangePlayerName);
 
         if (_vm != null)
         {
@@ -54,6 +56,12 @@ public class ProfileSettingView : ViewBase
 
     private void OnClickClose()
     {
+        UIManager.Instance.CloseUI(UIRootType.PopupUI, UIType.ProfileSettingUI);
+    }
+
+    private void OnClickChangePlayerName()
+    {
+        UIManager.Instance.OpenUI(UIRootType.PopupUI, UIType.SetPlayerNameUI);
         UIManager.Instance.CloseUI(UIRootType.PopupUI, UIType.ProfileSettingUI);
     }
 
