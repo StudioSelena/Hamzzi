@@ -1303,8 +1303,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8641985342457531162}
+  - component: {fileID: 1638253065406670718}
   m_Layer: 5
-  m_Name: SeedStealUI
+  m_Name: StealSeedUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1331,6 +1332,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1638253065406670718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8188289243508515723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4f349cd19fac9a4ab0ae258464617b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StealSeedUI
+  Button_CloseBack: {fileID: 1223924735336529427}
+  Button_Close: {fileID: 3184248608255538446}
 --- !u!1 &8519231423899500267
 GameObject:
   m_ObjectHideFlags: 0
@@ -1505,6 +1520,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
+--- !u!114 &1223924735336529427 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2155738438989154769, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
+  m_PrefabInstance: {fileID: 943215773484496834}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2527204ab2836534897bb271b9343f4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
 --- !u!224 &6431796904312998759 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}

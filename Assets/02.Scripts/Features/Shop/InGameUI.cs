@@ -18,6 +18,7 @@ public class InGameUI : ViewBase
     [SerializeField] private UIButton Button_GoHome;
     [SerializeField] private UIButton Button_ProfileSetting;
     [SerializeField] private UIButton Button_Cross;
+    [SerializeField] private UIButton Button_StealSeed;
 
     [Header("보유 씨앗")]
     [SerializeField] private GameObject Prefab_CurrencyUI;
@@ -51,6 +52,7 @@ public class InGameUI : ViewBase
         Button_GoHome.BindOnClickButtonEvent(OnClick_GoHome, true);
         Button_ProfileSetting.BindOnClickButtonEvent(OnClick_ProfileSetting);
         Button_Cross.BindOnClickButtonEvent(OnClick_Cross, true);
+        Button_StealSeed.BindOnClickButtonEvent(OnClick_StealSeed, true);
 
         if (_housingVM == null)
         {
@@ -79,6 +81,7 @@ public class InGameUI : ViewBase
         Button_Exit.UnBindOnClickButtonEvent(OnClick_Exit);
         Button_GoHome.UnBindOnClickButtonEvent(OnClick_GoHome);
         Button_Cross.UnBindOnClickButtonEvent(OnClick_Cross);
+        Button_StealSeed.UnBindOnClickButtonEvent(OnClick_StealSeed);
     }
 
     private void FindUserViewModelAndBind()
@@ -261,12 +264,16 @@ public class InGameUI : ViewBase
 
         UIManager.Instance.OpenLoadingUI();
         ServiceManager.Instance.LoadDataFromDB();
-        
     }
 
     private void OnClick_Cross()
     {
         UIManager.Instance.OpenUI(UIRootType.PopupUI, UIType.CrossUI);
+    }
+
+    private void OnClick_StealSeed()
+    {
+        UIManager.Instance.OpenStealSeedUI();
     }
 
     public void UpdateButton()
@@ -295,5 +302,6 @@ public class InGameUI : ViewBase
 
         Button_GoHome.gameObject.SetActive(isVisiting);
         Button_Cross.gameObject.SetActive(isVisiting);
+        Button_StealSeed.gameObject.SetActive(isVisiting);
     }
 }

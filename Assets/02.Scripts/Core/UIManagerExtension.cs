@@ -37,6 +37,7 @@ public enum UIType
     FriendRequestListUI,
     CrossUI,
     ProfileSettingUI,
+    StealSeedUI
 }
 
 public static class UIManagerExtension
@@ -189,5 +190,15 @@ public static class UIManagerExtension
     public static void CloseIdleRewardPopupUI(this UIManager uiManager)
     {
         uiManager.CloseUI(UIRootType.PopupUI, UIType.IdleRewardPopupUI);
+    }
+
+    public static void OpenStealSeedUI(this UIManager uiManager)
+    {
+        uiManager.OpenUI(UIRootType.PopupUI, UIType.StealSeedUI);
+    }
+
+    public static void CloseStealSeedUI(this UIManager uiManager)
+    {
+        uiManager.CloseUI(UIRootType.PopupUI, UIType.StealSeedUI);
     }
 }
