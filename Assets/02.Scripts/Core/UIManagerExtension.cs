@@ -37,6 +37,7 @@ public enum UIType
     FriendRequestListUI,
     CrossUI,
     ProfileSettingUI,
+    ChangePlayerNameUI,
 }
 
 public static class UIManagerExtension
