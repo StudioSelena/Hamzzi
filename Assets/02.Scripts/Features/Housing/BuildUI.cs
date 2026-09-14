@@ -7,7 +7,9 @@ public class BuildUI : ViewBase
 {
     [SerializeField] private GameObject Panel_Vignette;
     [SerializeField] private GameObject Panel_InfoText;
+    [SerializeField] private GameObject Panel_CostText;
     [SerializeField] private TextMeshProUGUI Text_Info;
+    [SerializeField] private TextMeshProUGUI Text_Cost;
 
     [SerializeField] private Button Button_Exit;
     [SerializeField] private Button Button_Confirm;
@@ -39,6 +41,12 @@ public class BuildUI : ViewBase
         Text_Info.text = "땅을 터치해 새로운 굴을 만들거나 기존 굴을 터치해 관리하세요!";
 
         _buildVM.EnterBuildMode();
+
+        if (_buildVM.SelectType == BuildType.Room)
+        {
+            Panel_CostText.SetActive(true);
+            UpdateCostText();
+        }
     }
 
     public void BindViewModel(BuildViewModel buildVM)
@@ -71,10 +79,23 @@ public class BuildUI : ViewBase
 
             case nameof(_buildVM.CanConfirm):
                 Button_Confirm.gameObject.SetActive(_buildVM.CanConfirm);
+
+                bool showCost = _buildVM.CanConfirm && _buildVM.IsBuildingNewRoom;
+                Panel_CostText.SetActive(showCost);
+
+                if (showCost)
+                {
+                    UpdateCostText();
+                }
+
                 break;
 
             case nameof(_buildVM.SelectRoom):
                 UpdateSelectionUI();
+                break;
+
+            case nameof(_buildVM.CurrentRoomCost):
+                UpdateCostText();
                 break;
         }
     }
@@ -154,5 +175,14 @@ public class BuildUI : ViewBase
         Button_Connect.gameObject.SetActive(false);
         Panel_InfoText.gameObject.SetActive(false);
         Panel_Vignette.SetActive(false);
+        Panel_CostText.SetActive(false);
+    }
+
+    private void UpdateCostText()
+    {
+        if (_buildVM != null)
+        {
+            Text_Cost.text = $"{_buildVM.CurrentRoomCost}";
+        }
     }
 }

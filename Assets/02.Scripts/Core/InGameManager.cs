@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class InGameManager : SingletonBase<InGameManager>
 {
-    private const float IdleRewardCapSeconds = 12f * 60f * 60f;
-    private const float IdleRewardRateMultiplier = 0.7f;
+    private const float IdleRewardCapSeconds = 6f * 60f * 60f;
+    private const float IdleRewardRateMultiplier = 0.3f;
     private const float PopupCloseDelaySeconds = 0.3f;
     private const float IdleRewardMinIntervalSeconds = 30f * 60f;
     private const float AutoSaveIntervalMinutes = 5f;

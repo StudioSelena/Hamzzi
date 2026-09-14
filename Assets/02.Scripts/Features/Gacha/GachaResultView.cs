@@ -30,7 +30,7 @@ public class GachaResultView : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void ShowGachaResult(List<string> hamsterIdList)
+    public void ShowGachaResult(List<HamsterSave> hamsterList)
     {
         if (_createdSlotList.Count <= 0)
         {
@@ -40,12 +40,13 @@ public class GachaResultView : MonoBehaviour
 
         Sequence gachaSequence = DOTween.Sequence();
 
-        int resultCount = hamsterIdList.Count;
+        int resultCount = hamsterList.Count;
         for(int i = 0; i < resultCount; i++)
         {
-            string hamsterId = hamsterIdList[i];
+            string hamsterId = hamsterList[i].HamsterId;
+            string faceId = hamsterList[i].FaceId;
             GachaResultSlot slot = _createdSlotList[i];
-            slot.UpdateSlot(hamsterId);
+            slot.UpdateSlot(hamsterId, faceId);
 
             var rect = slot.GetComponent<RectTransform>();
             gachaSequence.AppendCallback(() => PlaySingleStamp(rect));

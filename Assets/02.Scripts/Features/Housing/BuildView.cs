@@ -214,7 +214,7 @@ public class BuildView : ViewBase
             }
             else
             {
-                SoundManager.Instance.PlaySFX("Build_Aisle", 0.1f);
+                SoundManager.Instance.PlaySFX("Build_Aisle", 0.3f);
             }
 
             prefab.transform.DOPunchScale(Vector3.one * 0.15f, 0.25f, 8, 1f);

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class FurnitureView : MonoBehaviour
 {
-    [SerializeField] Renderer[] Renderers;
+    [SerializeField] private Renderer[] Renderers;
     [SerializeField] private float YOffset = 0f;
 
     public FurnitureViewModel FurnitureVM { get; private set; }
@@ -14,21 +14,16 @@ public class FurnitureView : MonoBehaviour
     private FeverTimeWheel _feverTimeWheel;
     private Vector3 _originScale;
 
+    public float Offset
+    {
+        get => YOffset;
+    }
+
     private void Awake()
     {
         _originScale = transform.localScale;
         InitRederers();
         _feverTimeWheel = GetComponent<FeverTimeWheel>();
-    }
-
-    private void Start()
-    {
-        if (YOffset != 0f)
-        {
-            Vector3 pos = transform.position;
-            pos.y += YOffset;
-            transform.position = pos;
-        }
     }
 
     public void Bind(FurnitureViewModel furnitureVM)
@@ -105,8 +100,8 @@ public class FurnitureView : MonoBehaviour
             if (long.TryParse(hamsterVal, out long uid))
             {
                 long userUID = ServiceManager.Instance.VisitedUserService.CurrentVisitedUid != 0 ? ServiceManager.Instance.VisitedUserService.CurrentVisitedUid : ServiceManager.Instance.LoginService.GetViewModel().UserUID;
-
                 var collectionVM = ServiceManager.Instance.CollectionService?.GetCollectionViewModel(userUID);
+
                 if (collectionVM != null && collectionVM.CollectedHamsterList.TryGetValue(uid, out var save))
                 {
                     targetHamsterID = save.HamsterId;

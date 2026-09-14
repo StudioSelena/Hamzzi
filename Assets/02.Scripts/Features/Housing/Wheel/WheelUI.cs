@@ -25,6 +25,7 @@ public class WheelUI : ViewBase
     private Dictionary<int, HamsterSlot> _spawnSlotList = new Dictionary<int, HamsterSlot>();
     private WheelViewModel _wheelVM;
     private string _selectHamsterID;
+    private const float PercentScale = 100f;
 
     private Dictionary<HamsterSlot, string> _slotUID = new Dictionary<HamsterSlot, string>();
 
@@ -144,7 +145,7 @@ public class WheelUI : ViewBase
             {
                 Text_PrevInfo.gameObject.SetActive(false);
                 Text_PrevDescription.gameObject.SetActive(true);
-                Text_PrevDescription.text = $"이름: {data.Name}\n해씨 수집율 {data.CollectSpeed * 100}%";
+                Text_PrevDescription.text = BuildHamsterDescriptionText(data);
 
                 Image_PrevHamster.gameObject.SetActive(true);
                 LoadIcon(Image_PrevHamster, data.IconPath).Forget();
@@ -179,7 +180,7 @@ public class WheelUI : ViewBase
 
             Text_NextInfo.gameObject.SetActive(false);
             Text_NextDescription.gameObject.SetActive(true);
-            Text_NextDescription.text = $"이름: {data.Name}\n해씨 수집율 {data.CollectSpeed * 100}%";
+            Text_NextDescription.text = BuildHamsterDescriptionText(data);
 
             Image_NextHamster.gameObject.SetActive(true);
             LoadIcon(Image_NextHamster, data.IconPath).Forget();
@@ -193,6 +194,13 @@ public class WheelUI : ViewBase
         }
     }
 
+    // 쳇바퀴 슬롯에 표시할 햄스터 정보 텍스트를 만든다
+    private string BuildHamsterDescriptionText(HamsterData hamsterData)
+    {
+        int collectSpeedPercent = Mathf.RoundToInt(hamsterData.CollectSpeed * PercentScale);
+
+        return $"이름: {hamsterData.Name}\n해씨 채집 속도 {collectSpeedPercent}%";
+    }
     private async UniTask LoadIcon(Image icon, string path)
     {
         Sprite sprite = await ResourceManager.Instance.LoadAsset<Sprite>(path);

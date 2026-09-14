@@ -7,16 +7,21 @@ public class SeedClickBonusManager : SingletonBase<SeedClickBonusManager>
     private const string BonusSeedAddress = "BonusSeed";
     private const float SpawnCheckIntervalSec = 5f;
     private const float SpawnProbability = 0.5f;
+    private const float SeedSpawnYOffset = 0.5f;
+    private const float SeedOccupiedCheckRadius = 0.5f;
+    private const string SeedLayerName = "Seed";
 
     [SerializeField] private Vector3 _spawnRangeMin;
     [SerializeField] private Vector3 _spawnRangeMax;
 
     private float _elapsedTime;
     private BuildViewModel _buildVM;
+    private int _seedLayerMask;
 
     private void Start()
     {
         _buildVM = ServiceManager.Instance.BuildService.GetBuildViewModel();
+        _seedLayerMask = LayerMask.GetMask(SeedLayerName);
     }
 
     private void Update()
@@ -38,39 +43,51 @@ public class SeedClickBonusManager : SingletonBase<SeedClickBonusManager>
 
     private void SpawnBonusSeed()
     {
-        if (TryGetRandomRoomCenter(out Vector3 spawnPosition))
+        if (TryGetEmptyRoomSpawnPosition(out Vector3 spawnPosition))
         {
             GameObjectManager.Instance.CreateObject(BonusSeedAddress, BonusSeedAddress, spawnPosition);
         }
     }
 
-    private bool TryGetRandomRoomCenter(out Vector3 roomCenterPos)
+    private bool TryGetEmptyRoomSpawnPosition(out Vector3 spawnPosition)
     {
-        roomCenterPos = Vector3.zero;
+        spawnPosition = Vector3.zero;
 
-        List<RoomViewModel> validRooms = new List<RoomViewModel>();
+        List<Vector3> emptyRoomPositions = new List<Vector3>();
 
         foreach (var build in _buildVM.Builds)
         {
             RoomViewModel roomVM = build.Value;
 
-            if (roomVM != null && roomVM.BuildType == BuildType.Room)
+            if (roomVM == null || roomVM.BuildType != BuildType.Room)
             {
-                validRooms.Add(roomVM);
+                continue;
             }
+
+            Vector3 center = GetRoomCenterWorldPosition(roomVM);
+            Vector3 candidatePosition = new Vector3(center.x, center.y + SeedSpawnYOffset, center.z);
+
+            if (IsSeedAlreadySpawned(candidatePosition))
+            {
+                continue;
+            }
+
+            emptyRoomPositions.Add(candidatePosition);
         }
 
-        if (validRooms.Count > 0)
+        if (emptyRoomPositions.Count == 0)
         {
-            int randomIndex = Random.Range(0, validRooms.Count);
-            RoomViewModel selectedRoom = validRooms[randomIndex];
-
-            Vector3 center = GetRoomCenterWorldPosition(selectedRoom);
-            roomCenterPos = new Vector3(center.x, center.y + 0.5f, center.z);
-            return true;
+            return false;
         }
 
-        return false;
+        int randomIndex = Random.Range(0, emptyRoomPositions.Count);
+        spawnPosition = emptyRoomPositions[randomIndex];
+        return true;
+    }
+
+    private bool IsSeedAlreadySpawned(Vector3 checkPosition)
+    {
+        return Physics.CheckSphere(checkPosition, SeedOccupiedCheckRadius, _seedLayerMask);
     }
 
     private Vector3 GetRoomCenterWorldPosition(RoomViewModel roomVM)
