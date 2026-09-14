@@ -25,6 +25,10 @@ public class HamsterManager : SingletonBase<HamsterManager>
     private int _collectCount = 0;
     private float _measureStartTime = 0f;
 
+    public event System.Action OnHamsterSpawned;
+    public bool IsHamsterSpawned { get; private set; } = false;
+    private int _spawningCount = 0;
+
     public bool IsCurrentCollectionMine()
     {
         long myUserUid = ServiceManager.Instance.LoginService.GetViewModel().UserUID;
@@ -115,7 +119,20 @@ public class HamsterManager : SingletonBase<HamsterManager>
 
     private void SyncCollectedHamsters()
     {
-        foreach (HamsterSave hamsterSave in _collectionViewModel.CollectedHamsterList.Values)
+        IsHamsterSpawned = false;
+        _spawningCount = 0;
+
+        Dictionary<long, HamsterSave> hamsters = _collectionViewModel?.CollectedHamsterList;
+
+        if (hamsters == null || hamsters.Count == 0)
+        {
+            IsHamsterSpawned = true;
+            OnHamsterSpawned?.Invoke();
+            ResetCollectMeasure();
+            return;
+        }
+
+        foreach (HamsterSave hamsterSave in hamsters.Values)
         {
             if (_spawnedHamsterObjectDict.ContainsKey(hamsterSave.HamsterUID))
             {
@@ -131,6 +148,7 @@ public class HamsterManager : SingletonBase<HamsterManager>
 
     private void SpawnHamster(HamsterSave hamsterSave)
     {
+        _spawningCount++;
         SpawnHamsterAsync(hamsterSave, _collectionGeneration).Forget();
     }
 
@@ -140,6 +158,8 @@ public class HamsterManager : SingletonBase<HamsterManager>
 
         GameObject hamsterObject = await GameObjectManager.Instance.CreateObjectAsync(hamsterSave.HamsterUID.ToString(), HamsterPrefabAddress, spawnSpot);
 
+        _spawningCount--;
+
         if (requestedGeneration != _collectionGeneration)
         {
             if (hamsterObject != null)
@@ -147,12 +167,14 @@ public class HamsterManager : SingletonBase<HamsterManager>
                 GameObjectManager.Instance.RequestDestroyObject(hamsterObject);
             }
 
+            CheckAllHamstersSpawned();
             return;
         }
 
         if (hamsterObject == null)
         {
             _spawnedHamsterObjectDict.Remove(hamsterSave.HamsterUID);
+            CheckAllHamstersSpawned();
             return;
         }
 
@@ -163,16 +185,29 @@ public class HamsterManager : SingletonBase<HamsterManager>
         if (hamsterForm == null)
         {
             _spawnedHamsterObjectDict.Remove(hamsterSave.HamsterUID);
+            CheckAllHamstersSpawned();
             return;
         }
 
         hamsterForm.SetBodyMesh(hamsterSave.HamsterId);
         hamsterForm.SetFaceMesh(hamsterSave.FaceId);
 
-        agent.enabled = true;
         SetHamsterCollectCycle(hamsterObject, hamsterSave.HamsterId);
 
         _spawnedHamsterObjectDict[hamsterSave.HamsterUID] = hamsterObject;
+
+        CheckAllHamstersSpawned();
+
+        agent.enabled = true;
+    }
+
+    private void CheckAllHamstersSpawned()
+    {
+        if (_spawningCount <= 0 && !IsHamsterSpawned)
+        {
+            IsHamsterSpawned = true;
+            OnHamsterSpawned?.Invoke();
+        }
     }
 
     // 햄스터의 씨앗 수집 능력에 맞춰 BT의 채집 사이클 시간을 설정한다

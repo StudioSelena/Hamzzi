@@ -259,7 +259,6 @@ public class InGameUI : ViewBase
 
         GameManager.Instance.ChangeMap(ServiceManager.Instance.LoginService.GetViewModel().UserUID).Forget();
 
-        UIManager.Instance.OpenLoadingUI();
         ServiceManager.Instance.LoadDataFromDB();
         
     }
