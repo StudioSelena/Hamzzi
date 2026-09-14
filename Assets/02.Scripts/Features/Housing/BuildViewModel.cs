@@ -128,17 +128,17 @@ public class BuildViewModel : ViewModelBase
     {
         get
         {
-            int roomCount = 0;
+            HashSet<RoomViewModel> countedRooms = new HashSet<RoomViewModel>();
 
             foreach (var roomVM in Builds.Values)
             {
                 if (roomVM.BuildType == BuildType.Room && !roomVM.IsDefault)
                 {
-                    roomCount++;
+                    countedRooms.Add(roomVM);
                 }
             }
 
-            return 1000 + (roomCount * 500);
+            return 1000 + (countedRooms.Count * 500);
         }
     }
 
