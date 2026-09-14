@@ -4906,7 +4906,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdce43a0db8cfb46997b820f5492eb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BonusSeed
-  _despawnDelaySec: 3
+  _despawnDelaySec: 7
 --- !u!1001 &8931957997472979021
 PrefabInstance:
   m_ObjectHideFlags: 0
