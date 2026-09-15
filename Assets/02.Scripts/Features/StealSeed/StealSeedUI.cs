@@ -20,9 +20,18 @@ public class StealSeedUI : ViewBase
     [Header("친구 씨앗")]
     [SerializeField] private TMP_Text Text_FriendSeedCount;
 
+    [Header("제한 메시지")]
+    [SerializeField] private TMP_Text Text_Lock;
+
     private CancellationTokenSource _cancelToken;
     private VisitedUserViewModel _visitedUserVm;
+    private UserViewModel _userVm;
     private int _stealSeedCount;
+
+    private void Awake()
+    {
+        _userVm = ServiceManager.Instance.UserService.GetUserViewModel();
+    }
 
     private void OnEnable()
     {
@@ -30,6 +39,7 @@ public class StealSeedUI : ViewBase
         Button_Close.BindOnClickButtonEvent(OnClick_Close);
         Button_StealSeed.BindOnClickButtonEvent(OnClick_StealSeed);
 
+        LockStealSeedButton();
         ResetSeedCount();
         FindVisitedViewModelAndBind();
     }
@@ -116,6 +126,32 @@ public class StealSeedUI : ViewBase
 
         await UniTask.Delay(TimeSpan.FromSeconds(0.8f), cancellationToken: _cancelToken.Token);
         UIManager.Instance.OpenStealSeedResultUI(_stealSeedCount);
+
+        DateTime lastStealTime = DateTime.Now;
+        _userVm.SetLastStealTime(lastStealTime);
+
+        LockStealSeedButton();
+    }
+
+    private void LockStealSeedButton()
+    {
+        // 교배 횟수를 다 사용했을 경우
+        DateTime lastStealTime = _userVm.LastStealTime;
+        DateTime nowTime = DateTime.Now;
+
+        DateTime recentResetTime = new DateTime(nowTime.Year, nowTime.Month, nowTime.Day, 6, 0, 0);
+        if (nowTime.Hour < 6)
+        {
+            recentResetTime = recentResetTime.AddDays(-1);
+        }
+
+        bool isStealable = lastStealTime < recentResetTime;
+        Button_StealSeed.SetInteractable(isStealable);
+        Text_Lock.gameObject.SetActive(isStealable == false);
+        if (isStealable == false)
+        {
+            return;
+        }
     }
 
     private void ResetSeedCount()
