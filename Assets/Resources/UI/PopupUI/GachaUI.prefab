@@ -1556,6 +1556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GachaView
   ExitButton: {fileID: 7364231393488450275}
+  CloseButton: {fileID: 3241010120348745156}
   DrawOneButton: {fileID: 5402906794912993766}
   DrawOnePriceText: {fileID: 6913725488767548284}
   DrawTenButton: {fileID: 1712721365889215623}
@@ -2080,11 +2081,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4602334095850775080, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -139.1222
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4602334095850775080, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -358.82037
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_Pivot.x
@@ -2112,11 +2113,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 881.5803
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 286.5822
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2128,7 +2129,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2685.9685
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2148,11 +2149,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.7902
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 2.7089
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2175,6 +2176,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
+--- !u!114 &3241010120348745156 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2155738438989154769, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
+  m_PrefabInstance: {fileID: 3535564542636438549}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2527204ab2836534897bb271b9343f4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
 --- !u!224 &7297086706100046000 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}

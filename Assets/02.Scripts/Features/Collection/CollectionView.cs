@@ -10,6 +10,7 @@ public class CollectionView : UIBase
 {
     [Header("UI Base")]
     [SerializeField] private UIButton ExitButton;
+    [SerializeField] private UIButton CloseButton;
 
     [Header("햄스터 리스트")]
     [SerializeField] private UIButton BodyListButton;
@@ -51,6 +52,7 @@ public class CollectionView : UIBase
     private void OnEnable()
     {
         ExitButton.BindOnClickButtonEvent(CloseCollectionUI);
+        CloseButton.BindOnClickButtonEvent(CloseCollectionUI);
 
         BodyListButton.BindOnClickButtonEvent(ShowHamsterList);
         EyeListButton.BindOnClickButtonEvent(ShowFaceList);

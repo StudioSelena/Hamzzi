@@ -1407,6 +1407,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CrossView
   ExitButton: {fileID: 6613272337467729464}
+  CloseButton: {fileID: 175303519963631370}
   MyHamsterSelectButton: {fileID: 7464106571036234323}
   FriendHamsterSelectButton: {fileID: 285653807843936162}
   CrossButton: {fileID: 2120728845608444988}
@@ -3249,11 +3250,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1583.5437
+      value: 2637.0479
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 604.1631
+      value: 1194.2959
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3285,11 +3286,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 6.1464844
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -11.576599
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3312,6 +3313,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
+--- !u!114 &175303519963631370 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2155738438989154769, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
+  m_PrefabInstance: {fileID: 2271068957627926235}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2527204ab2836534897bb271b9343f4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
 --- !u!224 &5463105653374089854 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
@@ -3367,6 +3379,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4045942007826180, guid: ae1ccce995fc8fb498d43082dccc3ef8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 137091713879346464, guid: ae1ccce995fc8fb498d43082dccc3ef8, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 137320691783860882, guid: ae1ccce995fc8fb498d43082dccc3ef8, type: 3}
+      propertyPath: m_SortingLayer
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

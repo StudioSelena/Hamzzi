@@ -6706,6 +6706,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectionView
   ExitButton: {fileID: 3632757136314265436}
+  CloseButton: {fileID: 7203138622858315887}
   BodyListButton: {fileID: 1391056341804941}
   EyeListButton: {fileID: 8143481406927529461}
   HamsterSlotPrefab: {fileID: 3531889357708306709, guid: d0701dad4a61db84fbd2f65606c8065a, type: 3}
@@ -7797,11 +7798,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 666.0601
+      value: 1864.7712
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 211.1405
+      value: 911.3965
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7813,7 +7814,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 34.72754
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7833,11 +7834,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0.1865
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1.1172
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -7865,3 +7866,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6076671508889877669, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
   m_PrefabInstance: {fileID: 9087147879176815038}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7203138622858315887 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2155738438989154769, guid: e2994fa9e5d4c6047bb6438f7e0849fd, type: 3}
+  m_PrefabInstance: {fileID: 9087147879176815038}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2527204ab2836534897bb271b9343f4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButton
