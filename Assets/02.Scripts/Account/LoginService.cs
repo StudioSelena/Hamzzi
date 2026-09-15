@@ -7,7 +7,7 @@ public class LoginService
 {
     private LoginViewModel _viewModel;
 
-    private string defaultIconAddress = "Hamster/HasterIcon/Hamster_00_Icon";
+    private string defaultIconAddress = "Hamster/ProfileIcon/Hamster_00_Icon";
     private string defaultName = "기본이름";
 
     public LoginService()

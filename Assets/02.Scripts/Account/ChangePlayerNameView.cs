@@ -74,8 +74,8 @@ public class ChangePlayerNameView : UIBase
 
     private void OnClickClose()
     {
-        UIManager.Instance.CloseUI(UIRootType.PopupUI, UIType.ChangePlayerNameUI);
         UIManager.Instance.OpenUI(UIRootType.PopupUI, UIType.ProfileSettingUI);
+        UIManager.Instance.CloseUI(UIRootType.PopupUI, UIType.ChangePlayerNameUI);
     }
 
     private void OnCompleteChangeName_View()

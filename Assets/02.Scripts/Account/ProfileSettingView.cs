@@ -61,7 +61,7 @@ public class ProfileSettingView : UIBase
 
     private void OnClickChangePlayerName()
     {
-        UIManager.Instance.OpenUI(UIRootType.PopupUI, UIType.SetPlayerNameUI);
+        UIManager.Instance.OpenUI(UIRootType.PopupUI, UIType.ChangePlayerNameUI);
         UIManager.Instance.CloseUI(UIRootType.PopupUI, UIType.ProfileSettingUI);
     }
 

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 [System.Serializable]
 public class HamsterData : GameDataBase
@@ -19,6 +20,12 @@ public class FaceData : GameDataBase
     public string Description;
     public string IconPath;
     public string MaterialPath;
+}
+
+[Serializable]
+public class ProfileIconData : GameDataBase
+{
+    public string IconPath;
 }
 
 [System.Serializable]

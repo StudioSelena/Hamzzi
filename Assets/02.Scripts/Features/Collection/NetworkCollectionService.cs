@@ -56,7 +56,8 @@ public class NetworkCollectionService
     private void SetHamsterViewModel(HamsterViewModel vm)
     {
         GameDataManager.Instance.LoadData<HamsterData>();
-        GameDataManager.Instance.LoadData<FaceData>();
+        GameDataManager.Instance.LoadData<FaceData>(); 
+        GameDataManager.Instance.LoadData<ProfileIconData>();
 
         var allHamsterIds = GameDataManager.Instance.GetAllDataId<HamsterData>();
         vm.AllHamsterIdList = allHamsterIds;
