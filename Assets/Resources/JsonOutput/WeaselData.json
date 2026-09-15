@@ -1,0 +1,14 @@
+[
+  {
+    "Id": "Weasel_01",
+    "OnlineAppearIntervalSec": 300,
+    "TapDurationSec": 8,
+    "RequiredTapCount": 10,
+    "StealSeedMinAmount": 50,
+    "StealSeedMaxAmount": 2000,
+    "MinSeedToAppear": 20000,
+    "OfflineMaxOccurrence": 3,
+    "OfflineMaxOccurrenceHours": 6,
+    "OfflineDefenseSuccessPercent": 50
+  }
+]
