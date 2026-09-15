@@ -49,6 +49,20 @@ public class VisitedUserViewModel : ViewModelBase
         }
     }
 
+    private int _displaySeedCount = 0;
+    public int DisplaySeedCount
+    {
+        get { return _displaySeedCount; }
+        set
+        {
+            if (_displaySeedCount != value)
+            {
+                _displaySeedCount = value;
+                OnPropertyChanged(nameof(DisplaySeedCount));
+            }
+        }
+    }
+
     public void SetService(VisitedUserService service)
     {
         _service = service;
@@ -64,6 +78,7 @@ public class VisitedUserViewModel : ViewModelBase
         {
             DisplayUid = data.UserUid;
             DisplayUserName = data.UserName;
+            DisplaySeedCount = data.SeedCount;
 
             if (data.UserIconId != "")
             {
