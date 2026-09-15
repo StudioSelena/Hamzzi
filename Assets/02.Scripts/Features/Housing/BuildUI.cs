@@ -47,6 +47,8 @@ public class BuildUI : ViewBase
             Panel_CostText.SetActive(true);
             UpdateCostText();
         }
+
+        CheckAfford();
     }
 
     public void BindViewModel(BuildViewModel buildVM)
@@ -78,16 +80,7 @@ public class BuildUI : ViewBase
                 break;
 
             case nameof(_buildVM.CanConfirm):
-                Button_Confirm.gameObject.SetActive(_buildVM.CanConfirm);
-
-                bool showCost = _buildVM.CanConfirm && _buildVM.IsBuildingNewRoom;
-                Panel_CostText.SetActive(showCost);
-
-                if (showCost)
-                {
-                    UpdateCostText();
-                }
-
+                CheckAfford();
                 break;
 
             case nameof(_buildVM.SelectRoom):
@@ -96,6 +89,7 @@ public class BuildUI : ViewBase
 
             case nameof(_buildVM.CurrentRoomCost):
                 UpdateCostText();
+                CheckAfford();
                 break;
         }
     }
@@ -183,6 +177,28 @@ public class BuildUI : ViewBase
         if (_buildVM != null)
         {
             Text_Cost.text = $"{_buildVM.CurrentRoomCost}";
+        }
+    }
+
+    private void CheckAfford()
+    {
+        bool canShow = _buildVM.CanConfirm;
+        Button_Confirm.gameObject.SetActive(canShow);
+
+        if (canShow)
+        {
+            var userVM = ServiceManager.Instance.UserService?.GetUserViewModel();
+            bool canAfford = userVM == null || userVM.SeedCount >= _buildVM.CurrentRoomCost;
+
+            Button_Confirm.interactable = canAfford;
+        }
+
+        bool showCost = canShow && _buildVM.IsBuildingNewRoom;
+        Panel_CostText.SetActive(showCost);
+
+        if (showCost)
+        {
+            UpdateCostText();
         }
     }
 }
