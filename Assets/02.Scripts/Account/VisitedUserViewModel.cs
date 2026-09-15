@@ -78,6 +78,7 @@ public class VisitedUserViewModel : ViewModelBase
         {
             DisplayUid = data.UserUid;
             DisplayUserName = data.UserName;
+            DisplaySeedCount = data.SeedCount;
 
             if (data.UserIconId != "")
             {

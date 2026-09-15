@@ -1718,6 +1718,7 @@ MonoBehaviour:
   Text_FirstNumber: {fileID: 319486307464986983}
   Text_SecondNumber: {fileID: 8773345227910033964}
   Text_ThirdNumber: {fileID: 4604625052393157987}
+  Text_FriendSeedCount: {fileID: 8422544820626515983}
 --- !u!1 &8519231423899500267
 GameObject:
   m_ObjectHideFlags: 0

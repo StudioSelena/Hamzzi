@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using TMPro;
 using UnityEngine;
@@ -16,7 +17,11 @@ public class StealSeedUI : ViewBase
     [SerializeField] private TMP_Text Text_SecondNumber;
     [SerializeField] private TMP_Text Text_ThirdNumber;
 
+    [Header("친구 씨앗")]
+    [SerializeField] private TMP_Text Text_FriendSeedCount;
+
     private CancellationTokenSource _cancelToken;
+    private VisitedUserViewModel _visitedUserVm;
     private int _stealSeedCount;
 
     private void OnEnable()
@@ -26,6 +31,15 @@ public class StealSeedUI : ViewBase
         Button_StealSeed.BindOnClickButtonEvent(OnClick_StealSeed);
 
         ResetSeedCount();
+        FindVisitedViewModelAndBind();
+    }
+
+    private void OnDisable()
+    {
+        if (_visitedUserVm != null)
+        {
+            _visitedUserVm.PropertyChanged -= OnPropChanged_VisitedUserView;
+        }
     }
 
     private void OnClick_Close()
@@ -36,6 +50,39 @@ public class StealSeedUI : ViewBase
     private void OnClick_StealSeed()
     {
         PlayRandomNumber().Forget();
+    }
+
+    private void FindVisitedViewModelAndBind()
+    {
+        var visitedVm = ServiceManager.Instance.VisitedUserService.GetViewModel();
+        _visitedUserVm = visitedVm;
+
+        _visitedUserVm.PropertyChanged += OnPropChanged_VisitedUserView;
+
+        UpdateUserInfo();
+    }
+
+    private void OnPropChanged_VisitedUserView(object sender, PropertyChangedEventArgs e)
+    {
+        switch (e.PropertyName)
+        {
+            case nameof(_visitedUserVm.DisplaySeedCount):
+                UpdateUserInfo();
+                break;
+        }
+    }
+
+    private void UpdateUserInfo()
+    {
+        if (_visitedUserVm == null)
+        {
+            return;
+        }
+
+        if (_visitedUserVm.DisplayUid != 0)
+        {
+            Text_FriendSeedCount.text = _visitedUserVm.DisplaySeedCount.ToString();
+        }
     }
 
     private async UniTask PlayRandomNumber()
