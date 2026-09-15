@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class ProfileSettingViewModel : ViewModelBase
 {
@@ -43,16 +44,22 @@ public class ProfileSettingViewModel : ViewModelBase
 
     public void RequestLoadIcons()
     {
-        List<HamsterData> hamsterList = GameDataManager.Instance.GetAllData<HamsterData>();
+        List<ProfileIconData> iconDataList = GameDataManager.Instance.GetAllData<ProfileIconData>();
         List<string> paths = new List<string>();
 
-        if (hamsterList != null)
+        if (iconDataList != null)
         {
-            int count = hamsterList.Count;
+            int count = iconDataList.Count;
+            Debug.Log($"[프로필 세팅] 불러온 아이콘 데이터 개수: {count}개");
+
             for (int i = 0; i < count; i++)
             {
-                paths.Add(hamsterList[i].IconPath);
+                paths.Add(iconDataList[i].IconPath);
             }
+        }
+        else
+        {
+            Debug.LogError("[프로필 세팅] ProfileIconData 리스트가 null입니다! GameDataManager에서 로드되지 않았습니다.");
         }
 
         IconPathList = paths;
