@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class UIManager : SingletonBase<UIManager>
@@ -15,7 +16,12 @@ public class UIManager : SingletonBase<UIManager>
     // [나라] TODO : 게임 시작하자마자 LoadingUI 열리도록
     private void Start()
     {
-        OpenUI(UIRootType.VeryFrontUI, UIType.LoadingUI);
+        UIBase uiBase = OpenUI(UIRootType.VeryFrontUI, UIType.LoadingUI);
+        if (uiBase is LoadingUI loadingUI)
+        {
+            loadingUI.StartLoadingResouce(2f).Forget();
+        }
+
         OpenUI(UIRootType.MainUI, UIType.TitleUI);
     }
 

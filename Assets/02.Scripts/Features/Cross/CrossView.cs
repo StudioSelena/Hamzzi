@@ -16,6 +16,7 @@ public class CrossView : ViewBase
 {
     [Header("버튼")]
     [SerializeField] private UIButton ExitButton;
+    [SerializeField] private UIButton CloseButton;
     [SerializeField] private UIButton MyHamsterSelectButton;
     [SerializeField] private UIButton FriendHamsterSelectButton;
     [SerializeField] private UIButton CrossButton;
@@ -46,6 +47,7 @@ public class CrossView : ViewBase
     {
         // 버튼 등록
         ExitButton.BindOnClickButtonEvent(OnClickExitButton);
+        CloseButton.BindOnClickButtonEvent(OnClickExitButton);
         MyHamsterSelectButton.BindOnClickButtonEvent(OnClickMyHamsterSelectButton);
         FriendHamsterSelectButton.BindOnClickButtonEvent(OnClickFirendHamsterSelectButton);
         CrossButton.BindOnClickButtonEvent(OnClickCrossButton);

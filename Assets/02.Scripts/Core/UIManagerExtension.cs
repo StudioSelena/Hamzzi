@@ -37,6 +37,7 @@ public enum UIType
     FriendRequestListUI,
     CrossUI,
     ProfileSettingUI,
+    ChangePlayerNameUI,
     StealSeedUI,
     StealSeedResultUI
 }
@@ -51,9 +52,16 @@ public static class UIManagerExtension
         return path;
     }
 
-    public static void OpenLoadingUI(this UIManager uiManager)
+    public static LoadingUI OpenLoadingUI(this UIManager uiManager, bool canCloseSelf)
     {
-        uiManager.OpenUI(UIRootType.VeryFrontUI, UIType.LoadingUI);
+        UIBase uiBase = uiManager.OpenUI(UIRootType.VeryFrontUI, UIType.LoadingUI);
+        
+        if (uiBase is LoadingUI loadingUI)
+        {
+            loadingUI.CanCloseSelf = canCloseSelf;
+        }
+        
+        return uiBase as LoadingUI;
     }
 
     public static void CloseLoadingUI(this UIManager uiManager)

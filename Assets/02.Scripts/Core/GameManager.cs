@@ -14,6 +14,9 @@ public class GameManager : SingletonBase<GameManager>
             return;
         }
 
+        LoadingUI loadingUI = UIManager.Instance.OpenLoadingUI(false);
+        UniTask loadingAnim = loadingUI.StartLoadingResouce(2f, 0.7f);
+
         BuildViewModel buildVM = ServiceManager.Instance.BuildService.GetBuildViewModel();
         buildVM.IsLoading = true;
 
@@ -85,6 +88,19 @@ public class GameManager : SingletonBase<GameManager>
         NavigationManager.Instance.BuildNav();
 
         buildVM.IsLoading = false;
+
+        await ServiceManager.Instance.CollectionService.LoadHamsterCollectionData(userUID);
+        ServiceManager.Instance.CollectionService.SetCurrentCollectionViewModel(userUID);
+
+        if (!HamsterManager.Instance.IsHamsterSpawned)
+        {
+            await UniTask.WaitUntil(() => HamsterManager.Instance.IsHamsterSpawned);
+        }
+
+        await loadingAnim;
+
+        loadingUI.SetSliderComplete();
+        UIManager.Instance.CloseLoadingUI();
     }
 
     public void ClearMap()
@@ -118,6 +134,9 @@ public class GameManager : SingletonBase<GameManager>
         housingVM.TargetRoom = null;
 
         _buildView.ClearAllBuilds();
+
+        GameObjectManager.Instance.RequestDestroyObject(_buildView.gameObject);
+        _buildView = null;
     }
 
     public async UniTask ChangeMap(long targetUserID)

@@ -7,21 +7,34 @@ using UnityEngine.UI;
 
 public class LoadingUI : UIBase
 {
+    [SerializeField] private Image Image_Background;
     [SerializeField] private RawImage RawImage_Loading;   
     [SerializeField] private Slider Slider_LoadingBar;
     [SerializeField] private TMP_Text Text_loading;
     [SerializeField] private TMP_Text Text_Tip;
 
     private CancellationTokenSource _cancelToken;   
-    float[] _pausePoints = { 0.2f, 0.2f, 0.2f };    
-    int _pauseIndex = 0;                            
+    private float[] _pausePoints = { 0.2f, 0.4f, 0.6f };    
+    private int _pauseIndex = 0;
+
+    public bool CanCloseSelf { get; set; } = true;
 
     private void OnEnable()
     {
+        _cancelToken = new CancellationTokenSource();
+
+        Image_Background.gameObject.SetActive(true);
+
         LoadAndSetLoadingImg().Forget();
-        StartLoadingResouce(2f).Forget();
         PlayLoadingText().Forget();
         LoadAndSetTipText().Forget();
+    }
+
+    private void OnDisable()
+    {
+        _cancelToken?.Cancel();
+        _cancelToken?.Dispose();
+        _cancelToken = null;
     }
 
     // 로딩 이미지 선택 + 로딩바 시작을 담당하는 함수
@@ -30,6 +43,7 @@ public class LoadingUI : UIBase
         Slider_LoadingBar.value = 0f;
 
         // 이전 이미지 안 보이게
+        RawImage_Loading.enabled = false;
         RawImage_Loading.texture = null;
 
         int randomIdx = UnityEngine.Random.Range(0, 2);
@@ -51,40 +65,46 @@ public class LoadingUI : UIBase
 
         // 새 이미지 준비된 뒤 표시
         RawImage_Loading.enabled = true;
+        Image_Background.gameObject.SetActive(false);
 
         await UniTask.Yield();
     }
 
     // 로딩바를 일정 시간 동안 채우는 비동기 함수
-    public async UniTaskVoid StartLoadingResouce(float duration)
+    public async UniTask StartLoadingResouce(float duration, float maxProgress = 1.0f)
     {
-        _cancelToken = new CancellationTokenSource();
-
         float elapsed = 0f;
         Slider_LoadingBar.value = 0f;
 
         while (elapsed < duration)
         {
+            if (_cancelToken == null || _cancelToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             elapsed += Time.deltaTime;
 
-            float progress = Mathf.Clamp01(elapsed / duration);
+            float progress = Mathf.Clamp01(elapsed / duration) * maxProgress;
             Slider_LoadingBar.value = progress;
 
             if (_pauseIndex < _pausePoints.Length && progress >= _pausePoints[_pauseIndex])
             {
                 float pausePointValue = _pausePoints[_pauseIndex];
-                Slider_LoadingBar.value = pausePointValue;
+                Slider_LoadingBar.value = pausePointValue * maxProgress;
                 await UniTask.Delay(TimeSpan.FromSeconds(pausePointValue), cancellationToken: _cancelToken.Token);
                 _pauseIndex++;
             }
-
-            Slider_LoadingBar.value = progress;
 
             await UniTask.Yield(PlayerLoopTiming.Update, _cancelToken.Token);
         }
 
         Slider_LoadingBar.value = 1.0f;
-        UIManager.Instance.CloseLoadingUI();
+        
+        if (CanCloseSelf == true)
+        {
+            UIManager.Instance.CloseLoadingUI();
+        }
     }
 
     public async UniTask PlayLoadingText()
@@ -127,4 +147,8 @@ public class LoadingUI : UIBase
         await UniTask.Yield();
     }
     
+    public void SetSliderComplete()
+    {
+        Slider_LoadingBar.value = 1.0f;
+    }
 }
