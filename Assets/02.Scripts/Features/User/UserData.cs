@@ -9,6 +9,7 @@ public class UserData : GameDataBase
     public int GoldCount;
     public float GoldPerSec;
     public DateTime LastCrossTime;
+    public DateTime LastStealTime;
 }
 
 [System.Serializable]
@@ -17,4 +18,5 @@ public class UserSaveData : GameDataBase
     public int GoldCount;
     public float GoldPerSec;
     public DateTime LastCrossTime;
+    public DateTime LastStealTime;
 }

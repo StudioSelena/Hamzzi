@@ -68,6 +68,20 @@ public class UserViewModel : ViewModelBase
             }
         }
     }
+
+    private DateTime _lastStealTime;
+    public DateTime LastStealTime
+    {
+        get { return _lastStealTime; }
+        set
+        {
+            if (_lastStealTime != value)
+            {
+                _lastStealTime = value;
+                OnPropertyChanged(nameof(LastStealTime));
+            }
+        }
+    }
 }
 
 public static class UserViewModelExtension
@@ -132,6 +146,14 @@ public static class UserViewModelExtension
     public static void SetLastCrossTime(this UserViewModel userVm, DateTime lastCrossTime)
     {
         userVm.LastCrossTime = lastCrossTime;
+
+        long userUID = ServiceManager.Instance.LoginService.GetViewModel().UserUID;
+        ServiceManager.Instance.UserService.SaveUserAsync(userUID).Forget();
+    }
+
+    public static void SetLastStealTime(this UserViewModel userVm, DateTime lastStealTime)
+    {
+        userVm.LastStealTime = lastStealTime;
 
         long userUID = ServiceManager.Instance.LoginService.GetViewModel().UserUID;
         ServiceManager.Instance.UserService.SaveUserAsync(userUID).Forget();

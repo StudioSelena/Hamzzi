@@ -49,6 +49,7 @@ public class UserService
         userVm.SeedCount = userData.GoldCount;
         userVm.GoldPerSec = userData.GoldPerSec;
         userVm.LastCrossTime = userData.LastCrossTime;
+        userVm.LastStealTime = userData.LastStealTime;
 
 #if UNITY_EDITOR
         Debug.Log($"[유저 로드] 씨앗 {userData.GoldCount} / 초당 {userData.GoldPerSec}");
@@ -69,7 +70,7 @@ public class UserService
                 {
                     await conn.OpenAsync();
 
-                    string query = $"SELECT User_Name, User_Icon_Data_ID, Gold_Count, Gold_Per_Sec, Last_Cross_Time FROM User_Game_Data WHERE User_UID = @userUid";
+                    string query = $"SELECT User_Name, User_Icon_Data_ID, Gold_Count, Gold_Per_Sec, Last_Cross_Time, Last_Steal_Time FROM User_Game_Data WHERE User_UID = @userUid";
 
                     using (MySqlCommand cmd = new MySqlCommand(query, conn))
                     {
@@ -85,6 +86,7 @@ public class UserService
                                 resultUserData.GoldCount = reader.GetInt32(2);
                                 resultUserData.GoldPerSec = reader.GetFloat(3);
                                 resultUserData.LastCrossTime = reader.GetDateTime(4);
+                                resultUserData.LastStealTime = reader.GetDateTime(5);
                             }
                         }
                     }
@@ -112,7 +114,7 @@ public class UserService
             {
                 await conn.OpenAsync();
 
-                string query = $"UPDATE User_Game_Data SET Gold_Count = @goldCount, Gold_Per_Sec = @goldPerSec, Last_Cross_Time = @lastCrossTime WHERE User_UID = @userUid";
+                string query = $"UPDATE User_Game_Data SET Gold_Count = @goldCount, Gold_Per_Sec = @goldPerSec, Last_Cross_Time = @lastCrossTime, Last_Steal_Time = @lastStealTime WHERE User_UID = @userUid";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, conn))
                 {
@@ -120,6 +122,7 @@ public class UserService
                     cmd.Parameters.AddWithValue("@goldPerSec", _userViewModel.GoldPerSec);
                     cmd.Parameters.AddWithValue("@userUid", userUid);
                     cmd.Parameters.AddWithValue("@lastCrossTime", _userViewModel.LastCrossTime);
+                    cmd.Parameters.AddWithValue("@lastStealTime", _userViewModel.LastStealTime);
 
                     await cmd.ExecuteNonQueryAsync();
                 }
