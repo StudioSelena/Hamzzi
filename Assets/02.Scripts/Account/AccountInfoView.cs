@@ -108,7 +108,6 @@ public class AccountInfoView : UIBase
             visitedUserVm.RequestLoadVisitedInfo();
         }
 
-        UIManager.Instance.OpenLoadingUI();
         Debug.Log("방문하기");
 
         ServiceManager.Instance.CollectionService.LoadHamsterCollectionData(visitedUserVm.DisplayUid).Forget();
