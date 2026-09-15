@@ -153,7 +153,6 @@ public class LoginView : UIBase
     {
         UIManager.Instance.CloseLoginUI();
         UIManager.Instance.CloseTitleUI();
-        UIManager.Instance.OpenLoadingUI();
         UIManager.Instance.OpenInGameUI();
         Debug.Log("로그인 성공");
     }

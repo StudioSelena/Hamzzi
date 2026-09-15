@@ -45,8 +45,6 @@ public class FriendSlotUI : UIBase
         var loginVm = ServiceManager.Instance.LoginService.GetViewModel();
         ServiceManager.Instance.UserService.SaveUserAsync(loginVm.UserUID).Forget();
 
-        UIManager.Instance.OpenLoadingUI();
-
         ServiceManager.Instance.VisitedUserService.CurrentVisitedUid = _friendUid;
         Debug.Log($"친구 방문. 대상 UID: {_friendUid}");
 
