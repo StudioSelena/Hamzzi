@@ -8,6 +8,7 @@ public class GachaView : ViewBase
 {
     [Header("UI Base")]
     [SerializeField] private Button ExitButton;
+    [SerializeField] private UIButton CloseButton;
 
     [Header("가챠 버튼")]
     [SerializeField] private Button DrawOneButton;
@@ -35,6 +36,7 @@ public class GachaView : ViewBase
     private void OnEnable()
     {
         ExitButton.onClick.AddListener(CloseCollectionUI);
+        CloseButton.BindOnClickButtonEvent(CloseCollectionUI);
 
         DrawOneButton.onClick.AddListener(DrawOneHamster);
         DrawTenButton.onClick.AddListener(DrawTenHamster);
