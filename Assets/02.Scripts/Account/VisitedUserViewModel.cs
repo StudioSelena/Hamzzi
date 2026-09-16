@@ -97,4 +97,9 @@ public class VisitedUserViewModel : ViewModelBase
             OnCompleteLoadInfo.Invoke();
         }
     }
+
+    public void RemoveSeedCount(int amount)
+    {
+        DisplaySeedCount -= amount;
+    }
 }
