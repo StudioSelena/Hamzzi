@@ -276,7 +276,8 @@ public class HamsterManager : SingletonBase<HamsterManager>
 
     // 측정 구간의 실제 채집 횟수로 초당 채집량을 갱신하고 구간을 새로 연다
     // 구간이 너무 짧으면 갱신하지 않고 구간을 이어서 누적한다 (열자마자 게임을 종료하면 큰 값으로 갱신되는 것을 막는다)
-    public void RefreshTotalCollectSpeedPerSec()
+    // 갱신했으면 true, 스킵했으면 false를 반환한다
+    public bool RefreshTotalCollectSpeedPerSec()
     {
         float elapsedSeconds = Time.time - _measureStartTime;
 
@@ -285,7 +286,7 @@ public class HamsterManager : SingletonBase<HamsterManager>
 #if UNITY_EDITOR
             Debug.Log($"[초당 채집량] 측정 구간 {elapsedSeconds}초로 부족. 갱신 스킵");
 #endif
-            return;
+            return false;
         }
 
         TotalCollectSpeedPerSec = _collectCount / elapsedSeconds;
@@ -295,6 +296,7 @@ public class HamsterManager : SingletonBase<HamsterManager>
 #endif
 
         ResetCollectMeasure();
+        return true;
     }
 
     // 측정 구간만 새로 연다. 컬렉션이 바뀌어 이전 구간을 쓸 수 없을 때 호출한다

@@ -9,7 +9,7 @@ public class InGameManager : SingletonBase<InGameManager>
     private const float IdleRewardCapSeconds = 6f * 60f * 60f;
     private const float IdleRewardRateMultiplier = 0.3f;
     private const float PopupCloseDelaySeconds = 0.3f;
-    private const float IdleRewardMinIntervalSeconds = 30f * 60f;
+    private const float IdleRewardMinIntervalSeconds = 1f * 60f;
     private const float AutoSaveIntervalMinutes = 5f;
 
     private int _pendingIdleReward;
@@ -142,10 +142,13 @@ public class InGameManager : SingletonBase<InGameManager>
 
         var userVm = ServiceManager.Instance.UserService.GetUserViewModel();
 
-        HamsterManager.Instance.RefreshTotalCollectSpeedPerSec();
+        bool isCollectSpeedRefreshed = HamsterManager.Instance.RefreshTotalCollectSpeedPerSec();
 
-        // TODO : 데이터 직접 접근 없애야 함
-        userVm.GoldPerSec = CalculateCurrentGoldPerSec();
+        if (isCollectSpeedRefreshed == true)
+        {
+            // TODO : 데이터 직접 접근 없애야 함
+            userVm.GoldPerSec = CalculateCurrentGoldPerSec();
+        }
 
         await ServiceManager.Instance.UserService.SaveUserAsync(loginVm.UserUID);
     }
