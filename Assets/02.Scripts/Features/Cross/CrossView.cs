@@ -25,7 +25,9 @@ public class CrossView : ViewBase
     [SerializeField] private CrossHamsterSelectView CrossHamsterSelectView;
     [SerializeField] private Sprite BaseHamsterSprite;
     [SerializeField] private Image MyHamsterImage;
+    [SerializeField] private Image MyFaceImage;
     [SerializeField] private Image FriendHamsterImage;
+    [SerializeField] private Image FriendFaceImage;
     [SerializeField] private TextMeshProUGUI CrossableText;
 
     [Header("결과")]
@@ -65,7 +67,9 @@ public class CrossView : ViewBase
 
         // 이미지 변경
         MyHamsterImage.sprite = BaseHamsterSprite;
+        MyFaceImage.sprite = BaseHamsterSprite;
         FriendHamsterImage.sprite = BaseHamsterSprite;
+        FriendFaceImage.sprite = BaseHamsterSprite;
 
         LockCrossButton();
     }
@@ -85,34 +89,44 @@ public class CrossView : ViewBase
         UIManager.Instance.CloseUI(UIRootType.PopupUI, UIType.CrossUI);
     }
 
-    private void OnSelectHamster(string hamsterId, HamsterOwnerType ownerType)
+    private void OnSelectHamster(string hamsterId, string faceId, HamsterOwnerType ownerType)
     {
-        Image iconImage = null;
+        Image hamsterIconImage = null;
+        Image faceIconImage = null;
 
         switch (ownerType)
         {
             case HamsterOwnerType.User:
-                iconImage = MyHamsterImage;
+                hamsterIconImage = MyHamsterImage;
+                faceIconImage = MyFaceImage;
                 _userHamsterId = hamsterId;
                 break;
             case HamsterOwnerType.Friend:
-                iconImage = FriendHamsterImage;
+                hamsterIconImage = FriendHamsterImage;
+                faceIconImage = FriendFaceImage;
                 _friendHamsterId = hamsterId;
                 break;
         }
 
-        UpdateIcon(hamsterId, iconImage).Forget();
+        UpdateIcon(hamsterId, faceId, hamsterIconImage, faceIconImage).Forget();
         LockCrossButton();
     }
 
-    private async UniTask UpdateIcon(string hamsterId, Image iconImage)
+    private async UniTask UpdateIcon(string hamsterId, string faceId, Image hamsterIconImage, Image faceIconImage)
     {
         HamsterData hamsterData = GameDataManager.Instance.GetData<HamsterData>(hamsterId);
         if (hamsterData == null)
             return;
 
-        var icon = await ResourceManager.Instance.LoadAsset<Sprite>(hamsterData.IconPath);
-        iconImage.sprite = icon;
+        var hamsterIcon = await ResourceManager.Instance.LoadAsset<Sprite>(hamsterData.IconPath);
+        hamsterIconImage.sprite = hamsterIcon;
+
+        FaceData faceData = GameDataManager.Instance.GetData<FaceData>(faceId);
+        if (faceData == null)
+            return;
+
+        var faceIcon = await ResourceManager.Instance.LoadAsset<Sprite>(faceData.IconPath);
+        faceIconImage.sprite = faceIcon;
     }
 
     private void OnClickMyHamsterSelectButton()

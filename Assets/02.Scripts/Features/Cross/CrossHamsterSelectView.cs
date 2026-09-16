@@ -12,9 +12,9 @@ public class CrossHamsterSelectView : MonoBehaviour
     [SerializeField] private GameObject SlotPrefab;
 
     private HamsterOwnerType _onwerType;
-    private List<HamsterSlot> _spawndSlotList = new List<HamsterSlot>();
+    private List<CrossSlot> _spawndSlotList = new List<CrossSlot>();
 
-    public event Action<string, HamsterOwnerType> OnSlotSelect;
+    public event Action<string, string, HamsterOwnerType> OnSlotSelect;
 
     private void OnEnable()
     {
@@ -50,19 +50,20 @@ public class CrossHamsterSelectView : MonoBehaviour
                 continue;
 
             var slotObject = Instantiate(SlotPrefab, ContentTransform);
-            var slotComponent = slotObject.GetComponent<HamsterSlot>();
+            var slotComponent = slotObject.GetComponent<CrossSlot>();
 
             var hamsterData = GameDataManager.Instance.GetData<HamsterData>(hamster.HamsterId);
+            var faceData = GameDataManager.Instance.GetData<FaceData>(hamster.FaceId);
 
-            slotComponent.InitSlot(hamsterData, true);
+            slotComponent.InitSlot(hamsterData, faceData, true);
             slotComponent.OnSlotClicked += OnClickSlot;
             _spawndSlotList.Add(slotComponent);
         }
     }
 
-    private void OnClickSlot(string hamsterId)
+    private void OnClickSlot(string hamsterId, string faceId)
     {
-        OnSlotSelect?.Invoke(hamsterId, _onwerType);
+        OnSlotSelect?.Invoke(hamsterId, faceId, _onwerType);
 
         gameObject.SetActive(false);
     }
