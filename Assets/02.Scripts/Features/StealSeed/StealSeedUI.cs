@@ -131,6 +131,8 @@ public class StealSeedUI : ViewBase
         _userVm.SetLastStealTime(lastStealTime);
 
         LockStealSeedButton();
+
+        _visitedUserVm.RemoveSeedCount(_stealSeedCount);
     }
 
     private void LockStealSeedButton()
