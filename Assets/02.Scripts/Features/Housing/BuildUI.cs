@@ -187,10 +187,17 @@ public class BuildUI : ViewBase
 
         if (canShow)
         {
-            var userVM = ServiceManager.Instance.UserService?.GetUserViewModel();
-            bool canAfford = userVM == null || userVM.SeedCount >= _buildVM.CurrentRoomCost;
+            if (!_buildVM.IsBuildingNewRoom)
+            {
+                Button_Confirm.interactable = true;
+            }
+            else
+            {
+                var userVM = ServiceManager.Instance.UserService?.GetUserViewModel();
+                bool canAfford = userVM == null || userVM.SeedCount >= _buildVM.CurrentRoomCost;
 
-            Button_Confirm.interactable = canAfford;
+                Button_Confirm.interactable = canAfford;
+            }
         }
 
         bool showCost = canShow && _buildVM.IsBuildingNewRoom;
